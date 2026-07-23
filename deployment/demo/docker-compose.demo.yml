@@ -1,0 +1,222 @@
+name: erp-express-peru-demo
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DEMO_DATABASE_NAME:?DEMO_DATABASE_NAME is required}
+      POSTGRES_USER: ${DEMO_DB_ADMIN_USER:?DEMO_DB_ADMIN_USER is required}
+      POSTGRES_PASSWORD: ${DEMO_DB_ADMIN_PASSWORD:?DEMO_DB_ADMIN_PASSWORD is required}
+    volumes:
+      - demo_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks: [demo_internal]
+
+  storage:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${DEMO_STORAGE_ACCESS_KEY:?DEMO_STORAGE_ACCESS_KEY is required}
+      MINIO_ROOT_PASSWORD: ${DEMO_STORAGE_SECRET_KEY:?DEMO_STORAGE_SECRET_KEY is required}
+    ports:
+      - "127.0.0.1:${DEMO_STORAGE_PORT:-19000}:9000"
+      - "127.0.0.1:${DEMO_STORAGE_CONSOLE_PORT:-19001}:9001"
+    volumes:
+      - demo_storage_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [demo_internal]
+
+  storage-init:
+    image: minio/mc:RELEASE.2025-07-21T05-28-08Z
+    depends_on:
+      storage: { condition: service_healthy }
+    environment:
+      MINIO_ROOT_USER: ${DEMO_STORAGE_ACCESS_KEY:?DEMO_STORAGE_ACCESS_KEY is required}
+      MINIO_ROOT_PASSWORD: ${DEMO_STORAGE_SECRET_KEY:?DEMO_STORAGE_SECRET_KEY is required}
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        mc alias set demo http://storage:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"
+        mc mb --ignore-existing demo/erp-demo-private
+        mc anonymous set none demo/erp-demo-private
+    networks: [demo_internal]
+
+  migrate:
+    image: erp-express-peru-demo-runtime:0.3.0
+    build:
+      context: ../..
+      dockerfile: deployment/demo/runtime.Dockerfile
+    depends_on:
+      postgres: { condition: service_healthy }
+    env_file: .env.demo
+    environment:
+      DATABASE_URL: postgresql://${DEMO_DB_ADMIN_USER}:${DEMO_DB_ADMIN_PASSWORD}@postgres:5432/${DEMO_DATABASE_NAME}
+    command: ["node", "packages/database/dist/migrate.js", "up"]
+    restart: "no"
+    networks: [demo_internal]
+
+  provision-roles:
+    image: postgres:17-alpine
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    environment:
+      PGHOST: postgres
+      PGDATABASE: ${DEMO_DATABASE_NAME}
+      PGUSER: ${DEMO_DB_ADMIN_USER}
+      PGPASSWORD: ${DEMO_DB_ADMIN_PASSWORD}
+      DEMO_DB_RUNTIME_PASSWORD: ${DEMO_DB_RUNTIME_PASSWORD}
+      DEMO_DB_RESET_PASSWORD: ${DEMO_DB_RESET_PASSWORD}
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        psql -v ON_ERROR_STOP=1 -tc "select 1 from pg_roles where rolname='erp_demo_runtime'" | grep -q 1 ||
+          psql -v ON_ERROR_STOP=1 -c "create role erp_demo_runtime login nosuperuser nocreatedb nocreaterole noinherit nobypassrls"
+        psql -v ON_ERROR_STOP=1 -tc "select 1 from pg_roles where rolname='erp_demo_reset'" | grep -q 1 ||
+          psql -v ON_ERROR_STOP=1 -c "create role erp_demo_reset login nosuperuser nocreatedb nocreaterole noinherit nobypassrls"
+        psql -v ON_ERROR_STOP=1 -c "alter role erp_demo_runtime password '$${DEMO_DB_RUNTIME_PASSWORD}'"
+        psql -v ON_ERROR_STOP=1 -c "alter role erp_demo_reset password '$${DEMO_DB_RESET_PASSWORD}'"
+        psql -v ON_ERROR_STOP=1 -c "grant connect on database erp_express_demo to erp_demo_runtime,erp_demo_reset"
+        psql -v ON_ERROR_STOP=1 -c "grant usage on schema public to erp_demo_runtime,erp_demo_reset"
+        psql -v ON_ERROR_STOP=1 -c "grant select,insert,update,delete on all tables in schema public to erp_demo_runtime,erp_demo_reset"
+        psql -v ON_ERROR_STOP=1 -c "grant usage,select on all sequences in schema public to erp_demo_runtime,erp_demo_reset"
+        psql -v ON_ERROR_STOP=1 -c "grant execute on all functions in schema public to erp_demo_runtime,erp_demo_reset"
+        psql -v ON_ERROR_STOP=1 -c "grant set on parameter session_replication_role to erp_demo_reset"
+    restart: "no"
+    networks: [demo_internal]
+
+  seed:
+    image: erp-express-peru-demo-runtime:0.3.0
+    pull_policy: never
+    depends_on:
+      provision-roles: { condition: service_completed_successfully }
+      storage-init: { condition: service_completed_successfully }
+    env_file: .env.demo
+    environment:
+      DATABASE_URL: postgresql://${DEMO_DB_ADMIN_USER}:${DEMO_DB_ADMIN_PASSWORD}@postgres:5432/${DEMO_DATABASE_NAME}
+      STORAGE_ENDPOINT: http://storage:9000
+      STORAGE_REGION: us-east-1
+      STORAGE_BUCKET: erp-demo-private
+      STORAGE_ACCESS_KEY: ${DEMO_STORAGE_ACCESS_KEY}
+      STORAGE_SECRET_KEY: ${DEMO_STORAGE_SECRET_KEY}
+    command: ["node", "packages/database/dist/phase3/demo-seed.js", "seed"]
+    restart: "no"
+    networks: [demo_internal]
+
+  api:
+    image: erp-express-peru-demo-runtime:0.3.0
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      seed: { condition: service_completed_successfully }
+    env_file: .env.demo
+    environment:
+      NODE_ENV: production
+      APP_URL: http://localhost:${DEMO_WEB_PORT:-18080}
+      APP_PUBLIC_URL: http://localhost:${DEMO_WEB_PORT:-18080}
+      DATABASE_URL: postgresql://${DEMO_DB_RUNTIME_USER}:${DEMO_DB_RUNTIME_PASSWORD}@postgres:5432/${DEMO_DATABASE_NAME}
+      STORAGE_ENDPOINT: http://storage:9000
+      STORAGE_REGION: us-east-1
+      STORAGE_BUCKET: erp-demo-private
+      STORAGE_ACCESS_KEY: ${DEMO_STORAGE_ACCESS_KEY}
+      STORAGE_SECRET_KEY: ${DEMO_STORAGE_SECRET_KEY}
+      PORT: "3000"
+    command: ["node", "apps/api/dist/main.js"]
+    ports:
+      - "127.0.0.1:${DEMO_API_PORT:-18081}:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/v1/health/readiness >/dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [demo_internal]
+
+  worker:
+    image: erp-express-peru-demo-runtime:0.3.0
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      seed: { condition: service_completed_successfully }
+    env_file: .env.demo
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${DEMO_DB_RUNTIME_USER}:${DEMO_DB_RUNTIME_PASSWORD}@postgres:5432/${DEMO_DATABASE_NAME}
+    command: ["node", "apps/worker/dist/main.js"]
+    networks: [demo_internal]
+
+  web:
+    image: erp-express-peru-demo-web:0.3.0
+    build:
+      context: ../..
+      dockerfile: deployment/demo/web.Dockerfile
+      args:
+        VITE_API_URL: http://localhost:${DEMO_API_PORT:-18081}/api/v1
+    restart: unless-stopped
+    depends_on:
+      api: { condition: service_healthy }
+    ports:
+      - "127.0.0.1:${DEMO_WEB_PORT:-18080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/demo-health >/dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [demo_internal]
+
+  demo-reset:
+    image: erp-express-peru-demo-runtime:0.3.0
+    pull_policy: never
+    profiles: [tools]
+    depends_on:
+      postgres: { condition: service_healthy }
+    env_file: .env.demo
+    environment:
+      DATABASE_URL: postgresql://${DEMO_DB_RESET_USER}:${DEMO_DB_RESET_PASSWORD}@postgres:5432/${DEMO_DATABASE_NAME}
+    command: ["node", "packages/database/dist/phase3/demo-seed.js", "reset"]
+    restart: "no"
+    networks: [demo_internal]
+
+  storage-reset:
+    image: minio/mc:RELEASE.2025-07-21T05-28-08Z
+    profiles: [tools]
+    depends_on:
+      storage: { condition: service_healthy }
+    environment:
+      APP_ENVIRONMENT: ${APP_ENVIRONMENT}
+      DEMO_RESET_ENABLED: ${DEMO_RESET_ENABLED}
+      MINIO_ROOT_USER: ${DEMO_STORAGE_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${DEMO_STORAGE_SECRET_KEY}
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        test "$${APP_ENVIRONMENT}" = "demo"
+        test "$${DEMO_RESET_ENABLED}" = "true"
+        mc alias set demo http://storage:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"
+        mc rm --recursive --force demo/erp-demo-private
+        mc mb --ignore-existing demo/erp-demo-private
+        mc anonymous set none demo/erp-demo-private
+        test -z "$$(mc find demo/erp-demo-private --print '{key}')"
+    networks: [demo_internal]
+
+volumes:
+  demo_postgres_data:
+    name: erp_express_peru_demo_postgres
+  demo_storage_data:
+    name: erp_express_peru_demo_storage
+
+networks:
+  demo_internal:
+    name: erp_express_peru_demo_internal
+    internal: false

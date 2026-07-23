@@ -1,0 +1,12 @@
+drop table if exists notification_preferences, notifications, outbox_events, idempotency_keys,
+  export_jobs, import_job_rows, import_jobs, exchange_rates, currencies,
+  bank_account_references, cash_movements, payment_applications, payments, cash_sessions,
+  cash_accounts, payable_installments, accounts_payable, receivable_installments,
+  accounts_receivable, supplier_documents, expenses, expense_categories, purchase_lines,
+  purchases, electronic_submission_attempts, commercial_document_events,
+  commercial_document_lines, commercial_documents, document_series, sale_lines, sales,
+  sales_order_lines, sales_orders, quotation_lines, quotations, stock_reservations,
+  stock_balances, stock_movement_lines, stock_movements, warehouses, customer_price_lists,
+  price_list_items, price_lists, item_barcodes, items, tax_rates, tax_profiles,
+  units_of_measure, item_categories, supplier_profiles, customer_profiles, party_contacts,
+  party_addresses, party_roles, parties, payment_terms cascade;

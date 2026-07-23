@@ -1,0 +1,14 @@
+ERP Express Perú utiliza componentes de terceros.
+
+El inventario verificable generado desde los package.json instalados se incluye en:
+
+  metadata/licenses.json
+
+La lista CycloneDX de componentes se incluye en:
+
+  metadata/sbom.cdx.json
+
+Cada componente conserva su propia licencia y avisos. Este archivo no sustituye los
+textos de licencia de cada dependencia. Antes de redistribuir o usar el software en
+otro contexto, revise el inventario generado y los términos originales.
+

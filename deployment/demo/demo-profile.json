@@ -1,0 +1,31 @@
+{
+  "code": "portable-local",
+  "name": "ERP Express Peru - demostracion portable",
+  "version": "0.3.0",
+  "environment": "demo",
+  "watermark": "ENTORNO DE DEMOSTRACION - DATOS FICTICIOS",
+  "resetSchedule": "0 4 * * *",
+  "limits": {
+    "users": 25,
+    "records": 10000,
+    "uploadBytes": 5242880
+  },
+  "providers": {
+    "electronicInvoicing": "mock",
+    "email": "local-disabled",
+    "ai": "disabled",
+    "ocr": "mock",
+    "geocoding": "manual",
+    "digitalSignature": "disabled"
+  },
+  "disabledCapabilities": [
+    "external-fiscal-submission",
+    "real-email",
+    "production-webhooks",
+    "real-digital-signature",
+    "unrestricted-export",
+    "external-ai"
+  ],
+  "dataDisclaimer": "Todos los nombres, documentos, correos, montos y eventos son sinteticos y exclusivamente demostrativos."
+}
+

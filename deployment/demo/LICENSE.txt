@@ -1,0 +1,13 @@
+ERP Express Perú — paquete de demostración
+
+Copyright (c) 2026. Todos los derechos reservados salvo las licencias de terceros
+identificadas en THIRD-PARTY-NOTICES.txt y metadata/licenses.json.
+
+Este paquete se entrega únicamente para evaluación y demostración local. No concede
+autorización para usar datos reales, operar procesos productivos, ofrecer garantías
+de cumplimiento o retirar avisos de autoría y licencias.
+
+EL SOFTWARE SE ENTREGA "TAL CUAL", SIN GARANTÍAS EXPRESAS O IMPLÍCITAS. La
+organización que lo evalúe debe obtener asesoría técnica, tributaria, de seguridad,
+privacidad y legal apropiada antes de cualquier uso distinto de la demostración.
+

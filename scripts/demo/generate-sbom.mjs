@@ -1,0 +1,64 @@
+import { createHash } from "node:crypto";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+export async function generateSbom(repositoryRoot, outputFile) {
+  await mkdir(dirname(outputFile), { recursive: true });
+  const lock = await readFile(resolve(repositoryRoot, "pnpm-lock.yaml"), "utf8");
+  const snapshotStart = lock.indexOf("\nsnapshots:\n");
+  const snapshotText = snapshotStart >= 0 ? lock.slice(snapshotStart + 12) : lock;
+  const components = new Map();
+  for (const line of snapshotText.split(/\r?\n/)) {
+    if (!line.startsWith("  ") || line.startsWith("    ") || !line.trimEnd().endsWith(":")) continue;
+    let key = line.trim().slice(0, -1);
+    if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith("\"") && key.endsWith("\""))) {
+      key = key.slice(1, -1);
+    }
+    const at = key.lastIndexOf("@");
+    if (at <= 0) continue;
+    const name = key.slice(0, at);
+    const version = key.slice(at + 1).split("(")[0];
+    if (!name || !version || version.startsWith("link:") || version.startsWith("workspace:")) continue;
+    components.set(`${name}@${version}`, {
+      type: "library",
+      name,
+      version,
+      purl: `pkg:npm/${encodeURIComponent(name).replace("%2F", "/")}@${encodeURIComponent(version)}`
+    });
+  }
+  const digest = createHash("sha256").update(lock).digest("hex");
+  const serial = [
+    digest.slice(0, 8), digest.slice(8, 12), `4${digest.slice(13, 16)}`,
+    `8${digest.slice(17, 20)}`, digest.slice(20, 32)
+  ].join("-");
+  const bom = {
+    bomFormat: "CycloneDX",
+    specVersion: "1.6",
+    serialNumber: `urn:uuid:${serial}`,
+    version: 1,
+    metadata: {
+      component: {
+        type: "application",
+        name: "erp-express-peru-demo",
+        version: "0.3.0"
+      },
+      properties: [
+        { name: "erp.demo.source-lock-sha256", value: digest },
+        { name: "erp.demo.data", value: "synthetic-only" }
+      ]
+    },
+    components: [...components.values()].sort((left, right) =>
+      `${left.name}@${left.version}`.localeCompare(`${right.name}@${right.version}`)
+    )
+  };
+  await writeFile(outputFile, `${JSON.stringify(bom, null, 2)}\n`, "utf8");
+  return bom;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  const repositoryRoot = resolve(process.argv[2] ?? ".");
+  const output = resolve(process.argv[3] ?? "dist/demo/sbom.cdx.json");
+  await generateSbom(repositoryRoot, output);
+  console.log(`SBOM CycloneDX generado: ${output}`);
+}

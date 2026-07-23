@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+# Normalize line endings in the repository to LF.
+* text=auto eol=lf
+
+# Binary assets must never be normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+
+# Lockfiles and generated compliance artifacts are diffed but not hand-edited.
+pnpm-lock.yaml linguist-generated=true

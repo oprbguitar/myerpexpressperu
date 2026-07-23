@@ -1,0 +1,61 @@
+{
+  "name": "erp-express-peru",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.31.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "argon2",
+      "esbuild"
+    ],
+    "overrides": {
+      "find-my-way": "9.7.0"
+    }
+  },
+  "scripts": {
+    "bootstrap": "pnpm install && pnpm docker:up && pnpm db:migrate && pnpm db:seed",
+    "dev": "pnpm --parallel --filter @erp/api --filter @erp/web --filter @erp/worker dev",
+    "build": "pnpm -r build",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:integration": "node --env-file=.env ./node_modules/vitest/vitest.mjs run tests/integration",
+    "test:e2e": "node --env-file=.env ./node_modules/@playwright/test/cli.js test",
+    "db:migrate": "tsx --env-file=.env packages/database/src/migrate.ts up",
+    "db:rollback": "tsx --env-file=.env packages/database/src/migrate.ts down",
+    "db:seed": "tsx --env-file=.env packages/database/src/seed.ts",
+    "db:reset": "tsx --env-file=.env packages/database/src/migrate.ts reset && pnpm db:seed",
+    "docker:up": "docker compose up -d postgres minio minio-init mailpit",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "format": "prettier --write .",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "security:scan": "pnpm check:secrets && node scripts/demo/check-secrets.mjs",
+    "sbom:generate": "node scripts/demo/generate-sbom.mjs . dist/demo/sbom.cdx.json",
+    "licenses:check": "node scripts/demo/generate-licenses.mjs . dist/demo/licenses.json",
+    "demo:verify": "node scripts/demo/verify-config.mjs && node scripts/demo/check-secrets.mjs",
+    "demo:build": "node scripts/demo/build-package.mjs",
+    "demo:smoke": "node scripts/demo/demo-smoke.mjs dist/demo/erp-express-peru-demo-portable-v0.3.0 dist/demo/erp-express-peru-demo-v0.3.0.zip",
+    "demo:start": "node scripts/demo/demo-command.mjs start",
+    "demo:status": "node scripts/demo/demo-command.mjs status",
+    "demo:health": "node scripts/demo/demo-command.mjs health",
+    "demo:reset": "node scripts/demo/demo-command.mjs reset",
+    "demo:stop": "node scripts/demo/demo-command.mjs stop",
+    "phase3:verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:integration && pnpm build && pnpm security:scan && pnpm check:bundle && pnpm audit --prod && pnpm demo:verify"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.32.0",
+    "@playwright/test": "1.54.1",
+    "@types/node": "24.1.0",
+    "eslint": "9.32.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "globals": "16.3.0",
+    "prettier": "3.6.2",
+    "tsx": "4.20.3",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.38.0",
+    "vitest": "3.2.4"
+  }
+}

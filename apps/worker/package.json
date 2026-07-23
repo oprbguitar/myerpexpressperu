@@ -1,0 +1,16 @@
+{
+  "name": "@erp/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsc -b && node --env-file=../../.env --watch dist/main.js",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@erp/database": "workspace:*"
+  }
+}
