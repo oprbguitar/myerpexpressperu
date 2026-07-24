@@ -1,0 +1,112 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+#
+# Integración continua de ERP Express Perú.
+# Nada de esto existía antes de la etapa S3 de estabilización; sin CI, todas las
+# correcciones eran reversibles en silencio (hallazgos H-7 y C-4).
+
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+env:
+  CI: "true"
+  PNPM_VERSION: 10.31.0
+  NODE_VERSION: 24
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: "${{ env.PNPM_VERSION }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: "${{ env.PNPM_VERSION }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+
+  compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: "${{ env.PNPM_VERSION }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:compliance
+      - run: pnpm license:headers
+      - run: pnpm license:scan
+      - run: pnpm provenance:verify
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: "${{ env.PNPM_VERSION }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: erp_express
+          POSTGRES_USER: erp
+          POSTGRES_PASSWORD: erp_local_only
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U erp -d erp_express"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      # El rol de migración es el propietario (erp); el rol de aplicación
+      # restringido (erp_app) lo crea la migración 0012. Se usan las mismas URLs
+      # que en local para que las pruebas corran con el rol real de runtime (S1).
+      DATABASE_URL: postgresql://erp_app:erp_app_local_only@localhost:5432/erp_express
+      DATABASE_MIGRATION_URL: postgresql://erp:erp_local_only@localhost:5432/erp_express
+      SESSION_SECRET: ci-only-session-secret-at-least-32-characters
+      APP_URL: http://localhost:5273
+      STORAGE_ENDPOINT: http://localhost:9000
+      STORAGE_REGION: us-east-1
+      STORAGE_BUCKET: erp-private
+      STORAGE_ACCESS_KEY: erp-local
+      STORAGE_SECRET_KEY: erp-local-secret
+      MAIL_HOST: localhost
+      MAIL_PORT: "1025"
+      MAIL_FROM: ERP Express Peru <no-reply@example.test>
+      SEED_ADMIN_EMAIL: admin@example.test
+      SEED_ADMIN_PASSWORD: Ci-Only-Change-Me-2026!
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: "${{ env.PNPM_VERSION }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      # Migraciones y semilla con el rol de migración; crean también erp_app.
+      - run: pnpm db:migrate
+      - run: pnpm db:seed
+      # Las pruebas de integración corren fallando en cerrado: sin base fallan,
+      # y en CI está prohibido ALLOW_INTEGRATION_TEST_SKIP.
+      - run: pnpm test:integration
