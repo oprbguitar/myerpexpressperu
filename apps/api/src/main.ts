@@ -15,7 +15,26 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module.js";
 import { config } from "./config.js";
 
-const adapter = new FastifyAdapter({ trustProxy: true, logger: { level: process.env.LOG_LEVEL ?? "info" } });
+/**
+ * Confianza en proxies inversos.
+ *
+ * `trustProxy: true` incondicional acepta `X-Forwarded-For` de CUALQUIER
+ * origen. Como esa IP alimenta el limitador de tasa, la auditoría y la
+ * evidencia de aceptación legal, un cliente directo podía falsificarla y
+ * evadir por completo el límite de peticiones rotando la cabecera.
+ *
+ * Ahora sólo se confía en los proxies declarados explícitamente en
+ * TRUSTED_PROXIES. Si la lista está vacía se usa la dirección real del
+ * socket y las cabeceras de reenvío se ignoran.
+ */
+const trustedProxies = config.TRUSTED_PROXIES.split(",")
+  .map((entry) => entry.trim())
+  .filter((entry) => entry.length > 0);
+
+const adapter = new FastifyAdapter({
+  trustProxy: trustedProxies.length > 0 ? trustedProxies : false,
+  logger: { level: process.env.LOG_LEVEL ?? "info" }
+});
 const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
 await app.register(cookie);
 await app.register(helmet, {

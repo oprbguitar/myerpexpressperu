@@ -1,0 +1,105 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0007
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: pending
+component: seguridad/proxy + docs/reviews
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Verificación técnica independiente del estado del sistema antes de continuar
+  con módulos de negocio de Fase 4, tratando SYSTEM-STATE-REPORT.md como
+  hipótesis no verificada.
+
+generated_or_modified_scope: >-
+  Corrección de seguridad: trustProxy pasa de `true` incondicional a lista
+  configurable TRUSTED_PROXIES, vacía por defecto. Producción de seis documentos
+  de revisión con evidencia ejecutada.
+
+files:
+  - apps/api/src/main.ts
+  - apps/api/src/config.ts
+  - .env.example
+  - docs/reviews/EXECUTIVE-TECHNICAL-REVIEW.md
+  - docs/reviews/PHASE-4-READINESS-DECISION.md
+  - docs/reviews/TENANT-ISOLATION-RESULTS.md
+  - docs/reviews/TRUSTED-PROXY-AND-IP-REVIEW.md
+  - docs/reviews/BASELINE-REPRODUCTION.md
+  - docs/reviews/HUMAN-DECISIONS-REQUIRED.md
+
+tests_executed:
+  - name: prueba de falsificación de X-Forwarded-For
+    result: pass
+    detail: >-
+      Antes: 5 formatos de IP falsificada aceptados verbatim desde conexión
+      directa. Después: registra 127.0.0.1, la dirección real del socket.
+  - name: prueba de evasión de limitador de tasa
+    result: pass
+    detail: >-
+      Antes: IP rotada 150x200 y 0x429 (límite anulado). Después: 117x200 y
+      33x429 (límite restaurado).
+  - name: pnpm phase4:verify
+    result: pass
+    detail: salida 0 tras la corrección
+  - name: pnpm test:e2e
+    result: pass
+    detail: 18 pasadas, 6 omitidas, idéntico a la línea base
+
+security_review: >-
+  Realizada por esta revisión; requiere confirmación humana independiente antes
+  de aceptarse.
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+
+defects_found_not_fixed:
+  - id: C-1
+    description: >-
+      La aplicación conecta a PostgreSQL como superusuario con rolbypassrls.
+      Las 16 políticas RLS están inertes. El aislamiento depende solo del
+      filtrado de la capa de aplicación.
+    severity: crítica
+    status: documentado, requiere decisión humana (D-8)
+  - id: C-2
+    description: >-
+      Desactivar un módulo no protege los ~80 endpoints de Fase 1/2, y
+      disable-impact afirma al operador que sí lo hace.
+    severity: crítica
+    status: documentado, no corregido
+  - id: C-4
+    description: >-
+      La suite de integración sale 0 con las 17 pruebas omitidas cuando falta
+      DATABASE_URL. No existe CI que lo detecte.
+    severity: crítica
+    status: documentado, no corregido
+  - id: H-1
+    description: >-
+      La capa de dominio de Fase 3 (869 líneas, 27 funciones) es código muerto;
+      sus 25 pruebas verdes no prueban comportamiento del sistema.
+    severity: alta
+    status: documentado, requiere decisión humana (D-7)
+
+limitations:
+  - >-
+    No se ejecutaron: despliegue en staging remoto, restauración de respaldo,
+    pruebas de carga, los cinco recorridos de usuario, inventario de base de
+    datos columna por columna, matriz de aislamiento tabla por tabla, ni
+    pruebas sistemáticas de IDOR. Se declara la ausencia; no se simuló.
+  - >-
+    Durante las pruebas se mutó el entorno local (contraseña de administrador,
+    módulos desactivados). Se restauró con pnpm db:reset y se verificó el
+    retorno a la línea base.
+  - >-
+    Una primera medición de la corrección de proxy fue inválida porque el
+    proceso antiguo retenía el puerto 3100. Se repitió tras liberarlo.
+  - >-
+    La corrección de proxy no tiene aún prueba automatizada, por lo que puede
+    revertirse sin que nada falle. Está listado como pendiente.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.

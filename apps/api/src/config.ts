@@ -20,6 +20,12 @@ const schema = z.object({
   LOGIN_BLOCK_SECONDS: z.coerce.number().int().positive().default(900),
   COOKIE_SECURE: z.stringbool().default(false),
   PORT: z.coerce.number().int().positive().default(3100),
+  // Lista de proxies de confianza (IP o CIDR, separados por coma).
+  // Vacío = NO confiar en ninguna cabecera de reenvío. Ese es el valor seguro
+  // por defecto: con `trustProxy: true` incondicional, cualquier cliente puede
+  // falsificar `X-Forwarded-For` y con ello la IP usada para limitar tasa,
+  // auditar y registrar evidencia legal de aceptación.
+  TRUSTED_PROXIES: z.string().default(""),
   DEMO_MODE: z.stringbool().default(false),
   DEMO_RESET_ENABLED: z.stringbool().default(false),
   DEMO_TENANT_ID: z.string().uuid().optional().or(z.literal("")),
