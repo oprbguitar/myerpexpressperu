@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router";
 import { useAuth } from "./auth";
 import { AppShell } from "./components/AppShell";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingState } from "./components/Ui";
 import { BranchesPage, DocumentsPage, RolesPage, UsersPage } from "./pages/SimplePages";
 import { ChangePasswordPage, ResetRequestPage } from "./pages/PasswordPages";
@@ -47,7 +48,11 @@ function Protected({ children }: { children: React.ReactNode }) {
   if (user.forcePasswordChange && location.pathname !== "/cambiar-clave") {
     return <Navigate to="/cambiar-clave" replace />;
   }
-  return <AppShell>{children}</AppShell>;
+  return (
+    <AppShell>
+      <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>
+    </AppShell>
+  );
 }
 
 export default function App() {

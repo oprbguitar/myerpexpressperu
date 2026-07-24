@@ -13,7 +13,7 @@ import { dateLabel, ErrorNotice, FormActions, money, ResponsiveRecords, StatusBa
 
 interface Configuration {
   productionConnected: boolean; warning: string;
-  providers: Array<{ provider: string; valid: boolean; warnings: string[] }>;
+  providers: Array<{ mode: string; valid: boolean; messages: string[] }>;
   officialLinks: Array<{ label: string; url: string }>;
 }
 interface Document {
@@ -42,7 +42,7 @@ export default function SunatPage() {
   return <div className="standard-page">
     <PageHeader eyebrow="Documentos electrónicos" title="SUNAT básico" />
     <div className="sunat-warning" role="note"><strong>Modo no productivo</strong><span>{configuration.data?.warning}</span></div>
-    <div className="provider-strip">{configuration.data?.providers.map((provider) => <article key={provider.provider}><strong>{provider.provider}</strong><StatusBadge status={provider.valid ? "active" : "FAILED"} /><small>{provider.warnings.join(" ") || "Configuración válida."}</small></article>)}</div>
+    <div className="provider-strip">{configuration.data?.providers.map((provider) => <article key={provider.mode}><strong>{provider.mode}</strong><StatusBadge status={provider.valid ? "active" : "FAILED"} /><small>{provider.messages.join(" ") || "Configuración válida."}</small></article>)}</div>
     {selected ? <form className="operational-form compact-form" onSubmit={(event) => { event.preventDefault(); submit.mutate(); }}>
       <div className="form-heading"><div><h2>Simular envío</h2><p>{selected.series}-{String(selected.number).padStart(8, "0")} · Nunca representa conexión productiva.</p></div></div>
       <ErrorNotice error={submit.error} />
