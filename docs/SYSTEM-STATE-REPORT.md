@@ -210,7 +210,7 @@ Todo lo de esta sección fue **ejecutado** en esta sesión con resultado exitoso
 
 | Capacidad | Evidencia |
 | --- | --- |
-| Multi-tenant con `tenant_id` / `company_id` | 208 tablas. Aislamiento real por **filtrado de aplicación**; las 16 políticas RLS están **inertes** en ejecución (§3.6, C-1) |
+| Multi-tenant con `tenant_id` / `company_id` | 209 tablas, **189 con RLS forzada y efectiva** tras S1. La API conecta con el rol restringido `erp_app`; aislamiento entre tenants probado por comportamiento (§3.6/§3.7, C-1 corregido) |
 | Autenticación por contraseña (argon2) | `auth.service.ts`, pruebas de seguridad |
 | Sesiones con TTL y revocación | `sessions`, `GET /auth/sessions` |
 | Bloqueo por intentos fallidos | `login_attempts`, `LOGIN_MAX_ATTEMPTS=5` |
