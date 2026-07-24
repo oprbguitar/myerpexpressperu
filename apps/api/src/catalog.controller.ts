@@ -12,6 +12,7 @@ import { ItemType } from "@erp/domain";
 import { RequirePermissions } from "./auth.guard.js";
 import { CatalogService } from "./catalog.service.js";
 import type { ApiRequest } from "./http.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const decimal = z.string().regex(/^\d{1,16}(?:\.\d{1,6})?$/);
 const itemSchema = z.object({
@@ -23,6 +24,7 @@ const itemSchema = z.object({
 });
 
 @ApiTags("catalog")
+@OwnedByModule("products")
 @Controller()
 export class CatalogController {
   constructor(private readonly catalog: CatalogService) {}

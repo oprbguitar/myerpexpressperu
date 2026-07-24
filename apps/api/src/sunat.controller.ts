@@ -12,6 +12,7 @@ import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { requireIdempotencyKey } from "./operations.js";
 import { SunatService } from "./sunat.service.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const documentStatus = z.enum([
   "ISSUED", "PENDING_SUBMISSION", "ACCEPTED", "ACCEPTED_WITH_OBSERVATIONS",
@@ -19,6 +20,7 @@ const documentStatus = z.enum([
 ]);
 
 @ApiTags("sunat")
+@OwnedByModule("sunat-basic")
 @Controller("sunat")
 export class SunatController {
   constructor(private readonly sunat: SunatService) {}

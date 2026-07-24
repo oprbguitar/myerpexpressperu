@@ -13,6 +13,7 @@ import { RequirePermissions } from "./auth.guard.js";
 import { DatabaseService } from "./database.service.js";
 import type { ApiRequest } from "./http.js";
 import { StorageService } from "./storage.service.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const allowedMimes = new Set(["application/pdf", "application/xml", "text/xml", "image/jpeg", "image/png"]);
 const ownerEntityTypeSchema = z.enum([
@@ -29,6 +30,7 @@ function detectedMime(bytes: Buffer): string | null {
   return null;
 }
 @ApiTags("documents")
+@OwnedByModule("documents")
 @Controller("documents")
 export class DocumentsController {
   constructor(private readonly database: DatabaseService, private readonly storage: StorageService) {}

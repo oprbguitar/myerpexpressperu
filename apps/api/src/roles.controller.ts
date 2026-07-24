@@ -12,8 +12,10 @@ import { z } from "zod";
 import { RequirePermissions } from "./auth.guard.js";
 import { DatabaseService } from "./database.service.js";
 import type { ApiRequest } from "./http.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 @ApiTags("roles")
+@CoreEndpoint()
 @Controller("roles")
 export class RolesController {
   constructor(private readonly database: DatabaseService) {}

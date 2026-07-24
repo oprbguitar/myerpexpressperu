@@ -14,8 +14,10 @@ import { AuthService } from "./auth.service.js";
 import { PublicRoute } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { config } from "./config.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 @ApiTags("auth")
+@CoreEndpoint()
 @Controller("auth")
 export class AuthController {
   constructor(private readonly auth: AuthService) {}

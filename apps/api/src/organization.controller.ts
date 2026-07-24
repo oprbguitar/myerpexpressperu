@@ -11,6 +11,7 @@ import { z } from "zod";
 import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { OrganizationService } from "./organization.service.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 const companySchema = z.object({
   legalName: z.string().min(2).max(200),
@@ -28,6 +29,7 @@ const companySchema = z.object({
 });
 
 @ApiTags("organization")
+@CoreEndpoint()
 @Controller()
 export class OrganizationController {
   constructor(private readonly organization: OrganizationService) {}

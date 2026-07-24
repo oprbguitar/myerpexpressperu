@@ -10,8 +10,10 @@ import { ApiTags } from "@nestjs/swagger";
 import { RequirePermissions } from "./auth.guard.js";
 import { DashboardService } from "./dashboard.service.js";
 import type { ApiRequest } from "./http.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 @ApiTags("dashboard")
+@OwnedByModule("dashboard")
 @Controller("dashboard")
 export class DashboardController {
   constructor(private readonly dashboard: DashboardService) {}

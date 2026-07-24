@@ -12,10 +12,12 @@ import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { requireIdempotencyKey } from "./operations.js";
 import { PurchasesService } from "./purchases.service.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const decimal = z.string().regex(/^\d{1,16}(?:\.\d{1,6})?$/);
 
 @ApiTags("purchases")
+@OwnedByModule("purchases")
 @Controller()
 export class PurchasesController {
   constructor(private readonly purchases: PurchasesService) {}

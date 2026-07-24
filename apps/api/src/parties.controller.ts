@@ -12,6 +12,7 @@ import { PartyType } from "@erp/domain";
 import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { PartiesService } from "./parties.service.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const roleSchema = z.enum(["CUSTOMER", "SUPPLIER", "TRANSPORT_PROVIDER", "CONTACT"]);
 const partySchema = z.object({
@@ -29,6 +30,7 @@ const partySchema = z.object({
 });
 
 @ApiTags("parties")
+@OwnedByModule("parties")
 @Controller()
 export class PartiesController {
   constructor(private readonly parties: PartiesService) {}

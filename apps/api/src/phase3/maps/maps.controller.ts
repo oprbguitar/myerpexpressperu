@@ -10,7 +10,9 @@ import { RequireModule, RequirePermissions } from "../../auth.guard.js";
 import type { ApiRequest } from "../../http.js";
 import { geocodeSchema } from "./maps.schemas.js";
 import { MapsService } from "./maps.service.js";
+import { OwnedByModule } from "../../module-ownership.js";
 
+@OwnedByModule("maps")
 @Controller("maps")
 export class MapsController {
   constructor(private readonly maps: MapsService) {}

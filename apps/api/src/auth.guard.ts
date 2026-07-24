@@ -12,6 +12,11 @@ import { hashToken } from "@erp/security";
 import { DatabaseService } from "./database.service.js";
 import { config } from "./config.js";
 import type { ApiRequest } from "./http.js";
+import {
+  CORE_ENDPOINT_METADATA,
+  ModuleDisabledException,
+  OWNED_MODULE_METADATA
+} from "./module-ownership.js";
 
 const permissionMetadata = "required-permissions";
 const moduleMetadata = "required-module";
@@ -71,19 +76,25 @@ export class AuthGuard implements CanActivate {
     if (required.some((permission) => !auth.permissions.has(permission))) {
       throw new ForbiddenException("No tiene permiso para realizar esta operación.");
     }
-    const requiredModule = this.reflector.getAllAndOverride<string>(moduleMetadata, [
+    // Enforcement de módulo. Un endpoint es o bien core (@CoreEndpoint) o bien
+    // propiedad de un módulo (@OwnedByModule / @RequireModule). Si el módulo
+    // está deshabilitado para la empresa, se rechaza con MODULE_DISABLED (409).
+    const isCore = this.reflector.getAllAndOverride<boolean>(CORE_ENDPOINT_METADATA, [
       context.getHandler(), context.getClass()
     ]);
-    if (requiredModule) {
+    const ownedModule =
+      this.reflector.getAllAndOverride<string>(moduleMetadata, [context.getHandler(), context.getClass()]) ??
+      this.reflector.getAllAndOverride<string>(OWNED_MODULE_METADATA, [context.getHandler(), context.getClass()]);
+    if (!isCore && ownedModule) {
       const [enabled] = await this.database.query<{ enabled: boolean }>(
         `select exists(
            select 1 from company_modules cm join modules m on m.id=cm.module_id
            where cm.tenant_id=$1 and cm.company_id=$2 and m.code=$3 and m.implemented
              and cm.status='enabled'
          ) enabled`,
-        [auth.tenantId, auth.companyId, requiredModule]
+        [auth.tenantId, auth.companyId, ownedModule]
       );
-      if (!enabled?.enabled) throw new ForbiddenException("El módulo requerido está deshabilitado.");
+      if (!enabled?.enabled) throw new ModuleDisabledException(ownedModule);
     }
     return true;
   }

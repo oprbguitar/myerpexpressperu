@@ -11,8 +11,10 @@ import { z } from "zod";
 import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { UsersService } from "./users.service.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 @ApiTags("users")
+@CoreEndpoint()
 @Controller("users")
 export class UsersController {
   constructor(private readonly users: UsersService) {}

@@ -10,7 +10,9 @@ import type { ApiRequest } from "../../http.js";
 import { RequireModule, RequirePermissions } from "../../auth.guard.js";
 import { aiFeedbackSchema, aiQuerySchema } from "./ai.schemas.js";
 import { AiAssistanceService } from "./ai.service.js";
+import { OwnedByModule } from "../../module-ownership.js";
 
+@OwnedByModule("artificial-intelligence")
 @Controller("ai")
 export class AiController {
   constructor(private readonly ai: AiAssistanceService) {}

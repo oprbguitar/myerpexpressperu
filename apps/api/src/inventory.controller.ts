@@ -13,11 +13,13 @@ import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { InventoryService } from "./inventory.service.js";
 import { requireIdempotencyKey } from "./operations.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const decimal = z.string().regex(/^\d{1,16}(?:\.\d{1,6})?$/);
 const line = z.object({ itemId: z.uuid(), quantity: decimal, unitCost: decimal.optional() });
 
 @ApiTags("inventory")
+@OwnedByModule("inventory-basic")
 @Controller()
 export class InventoryController {
   constructor(private readonly inventory: InventoryService) {}

@@ -11,9 +11,11 @@ import { RequireModule, RequirePermissions } from "../../auth.guard.js";
 import type { ApiRequest } from "../../http.js";
 import { createOcrJobSchema, ocrReviewSchema } from "./ocr.schemas.js";
 import { OcrAssistanceService } from "./ocr.service.js";
+import { OwnedByModule } from "../../module-ownership.js";
 
 const jobIdSchema = z.string().uuid();
 
+@OwnedByModule("ocr")
 @Controller("ocr")
 export class OcrController {
   constructor(private readonly ocr: OcrAssistanceService) {}

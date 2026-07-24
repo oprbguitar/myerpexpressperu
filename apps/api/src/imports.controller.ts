@@ -12,10 +12,12 @@ import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { ImportsService } from "./imports.service.js";
 import { requireIdempotencyKey } from "./operations.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const importType = z.enum(["CUSTOMERS", "SUPPLIERS", "PRODUCTS", "SERVICES", "OPENING_STOCK", "PRICE_LISTS"]);
 
 @ApiTags("imports-exports")
+@OwnedByModule("imports")
 @Controller()
 export class ImportsController {
   constructor(private readonly imports: ImportsService) {}

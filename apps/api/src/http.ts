@@ -83,11 +83,23 @@ export class ApiExceptionFilter implements ExceptionFilter {
     let code = "INTERNAL_ERROR";
     let message = "Ocurrió un error inesperado.";
     let details: unknown[] = [];
+    let extra: Record<string, unknown> = {};
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const response = exception.getResponse();
-      code = status === 401 ? "AUTHENTICATION_REQUIRED" : status === 403 ? "PERMISSION_DENIED" : "REQUEST_ERROR";
-      message = typeof response === "string" ? response : exception.message;
+      // Respuestas estructuradas (p. ej. MODULE_DISABLED) traen su propio code y
+      // campos adicionales; se preservan en vez de aplanarlas.
+      if (response && typeof response === "object" && "code" in response) {
+        const structured = response as { code: string; message?: string; [key: string]: unknown };
+        code = structured.code;
+        message = typeof structured.message === "string" ? structured.message : exception.message;
+        extra = Object.fromEntries(
+          Object.entries(structured).filter(([key]) => key !== "code" && key !== "message")
+        );
+      } else {
+        code = status === 401 ? "AUTHENTICATION_REQUIRED" : status === 403 ? "PERMISSION_DENIED" : "REQUEST_ERROR";
+        message = typeof response === "string" ? response : exception.message;
+      }
     } else if (exception instanceof DomainValidationError) {
       status = 422;
       code = exception.code;
@@ -97,7 +109,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
       console.error(exception);
     }
     void reply.status(status).send({
-      error: { code, message, details, requestId: request.requestId ?? "unavailable" }
+      error: { code, message, details, ...extra, requestId: request.requestId ?? "unavailable" }
     });
   }
 }

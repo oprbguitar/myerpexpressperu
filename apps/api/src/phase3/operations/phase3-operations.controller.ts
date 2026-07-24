@@ -9,6 +9,7 @@ import { Body, Controller, Get, Param, Post, Req } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { RequireModule, RequirePermissions } from "../../auth.guard.js";
+import { OwnedByModule } from "../../module-ownership.js";
 import type { ApiRequest } from "../../http.js";
 import { Phase3OperationsService } from "./phase3-operations.service.js";
 
@@ -92,6 +93,7 @@ function snakeCase(input: Record<string, unknown>): Record<string, string | numb
 
 @ApiTags("phase3-administration")
 @Controller("admin")
+@OwnedByModule("admin-control-plane")
 export class Phase3AdminController {
   constructor(private readonly operations: Phase3OperationsService) {}
 
@@ -132,6 +134,7 @@ export class Phase3AdminController {
 
 @ApiTags("phase3-crm")
 @Controller("crm")
+@OwnedByModule("crm")
 export class Phase3CrmController {
   constructor(private readonly operations: Phase3OperationsService) {}
   @Get("leads") @RequirePermissions("crm.read") @RequireModule("crm")
@@ -150,6 +153,7 @@ export class Phase3CrmController {
 
 @ApiTags("phase3-projects")
 @Controller("projects")
+@OwnedByModule("projects")
 export class Phase3ProjectsController {
   constructor(private readonly operations: Phase3OperationsService) {}
   @Get() @RequirePermissions("projects.read") @RequireModule("projects")
@@ -183,6 +187,7 @@ export class Phase3ProjectsController {
 
 @ApiTags("phase3-hr-sst")
 @Controller()
+@OwnedByModule("human-resources")
 export class Phase3PeopleController {
   constructor(private readonly operations: Phase3OperationsService) {}
   @Get("hr/employees") @RequirePermissions("hr.read") @RequireModule("human-resources")
@@ -212,6 +217,7 @@ export class Phase3PeopleController {
 
 @ApiTags("phase3-assets")
 @Controller()
+@OwnedByModule("assets")
 export class Phase3AssetsController {
   constructor(private readonly operations: Phase3OperationsService) {}
   @Get("assets") @RequirePermissions("assets.read") @RequireModule("assets")

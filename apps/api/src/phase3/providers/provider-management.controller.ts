@@ -10,10 +10,12 @@ import { z } from "zod";
 import { RequireModule, RequirePermissions } from "../../auth.guard.js";
 import { ProviderManagementService } from "./provider-management.service.js";
 import type { ApiRequest } from "../../http.js";
+import { OwnedByModule } from "../../module-ownership.js";
 
 const providerIdSchema = z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/);
 const activationSchema = z.object({ productionConfirmation: z.boolean().default(false) }).strict();
 
+@OwnedByModule("provider-management")
 @Controller("admin/providers")
 export class ProviderManagementController {
   constructor(private readonly providers: ProviderManagementService) {}

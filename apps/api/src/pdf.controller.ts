@@ -11,6 +11,7 @@ import { z } from "zod";
 import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { PdfService } from "./pdf.service.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 const pdfType = z.enum([
   "quotation", "sales-order", "sale", "purchase",
@@ -18,6 +19,7 @@ const pdfType = z.enum([
 ]);
 
 @ApiTags("pdf")
+@CoreEndpoint()
 @Controller("pdf")
 export class PdfController {
   constructor(private readonly pdf: PdfService) {}

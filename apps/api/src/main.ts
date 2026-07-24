@@ -14,6 +14,7 @@ import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fa
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module.js";
 import { DatabaseService } from "./database.service.js";
+import { verifyModuleOwnership } from "./module-verification.js";
 import { config } from "./config.js";
 
 /**
@@ -37,6 +38,19 @@ const adapter = new FastifyAdapter({
   logger: { level: process.env.LOG_LEVEL ?? "info" }
 });
 const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
+
+// Verificación fail-closed de propiedad de módulo (S2): ningún controlador puede
+// quedar sin declarar su módulo o su condición de core. Si algo falta, el
+// arranque se detiene, de modo que un controlador nuevo no evade el enforcement.
+{
+  const violations = verifyModuleOwnership();
+  if (violations.length > 0) {
+    for (const violation of violations) {
+      console.error(`Propiedad de módulo: ${violation.controller} — ${violation.problem}`);
+    }
+    throw new Error(`Enforcement de módulo: ${violations.length} controlador(es) sin propiedad válida.`);
+  }
+}
 
 // Guarda de arranque: el rol de runtime jamás debe ser superusuario ni tener
 // BYPASSRLS, porque eso anularía por completo las políticas RLS (hallazgo C-1).

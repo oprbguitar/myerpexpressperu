@@ -13,6 +13,7 @@ import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { requireIdempotencyKey } from "./operations.js";
 import { SalesService } from "./sales.service.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const decimal = z.string().regex(/^\d{1,16}(?:\.\d{1,6})?$/);
 const rate = z.string().regex(/^0(?:\.\d{1,6})?$|^1(?:\.0{1,6})?$/);
@@ -22,6 +23,7 @@ const lineSchema = z.object({
 });
 
 @ApiTags("sales")
+@OwnedByModule("sales")
 @Controller()
 export class SalesController {
   constructor(private readonly sales: SalesService) {}

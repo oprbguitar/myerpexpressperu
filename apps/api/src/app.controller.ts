@@ -10,8 +10,10 @@ import { ApiTags } from "@nestjs/swagger";
 import { PublicRoute } from "./auth.guard.js";
 import { DatabaseService } from "./database.service.js";
 import type { ApiRequest } from "./http.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 @ApiTags("system")
+@CoreEndpoint()
 @Controller()
 export class AppController {
   constructor(private readonly database: DatabaseService) {}

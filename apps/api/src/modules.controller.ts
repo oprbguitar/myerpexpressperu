@@ -11,8 +11,10 @@ import { z } from "zod";
 import { RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { ModulesService } from "./modules.service.js";
+import { CoreEndpoint } from "./module-ownership.js";
 
 @ApiTags("modules")
+@CoreEndpoint()
 @Controller("modules")
 export class ModulesController {
   constructor(private readonly modules: ModulesService) {}

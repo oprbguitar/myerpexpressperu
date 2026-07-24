@@ -9,19 +9,22 @@ import { Body, Controller, Get, Param, Post, Query, Req } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { z } from "zod";
 import { PaymentDirection, PaymentMethod } from "@erp/domain";
-import { RequirePermissions } from "./auth.guard.js";
+import { RequireModule, RequirePermissions } from "./auth.guard.js";
 import type { ApiRequest } from "./http.js";
 import { FinanceService } from "./finance.service.js";
 import { requireIdempotencyKey } from "./operations.js";
+import { OwnedByModule } from "./module-ownership.js";
 
 const amount = z.string().regex(/^\d{1,16}(?:\.\d{1,2})?$/);
 
 @ApiTags("finance")
+@OwnedByModule("payments")
 @Controller()
 export class FinanceController {
   constructor(private readonly finance: FinanceService) {}
   @Get("receivables")
   @RequirePermissions("receivables.read")
+  @RequireModule("receivables")
   receivables(@Req() request: ApiRequest, @Query() query: unknown) {
     return this.finance.receivables(request, z.object({
       status: z.enum(["OPEN", "PARTIALLY_PAID", "PAID", "OVERDUE", "CANCELLED"]).optional(),
@@ -30,6 +33,7 @@ export class FinanceController {
   }
   @Get("payables")
   @RequirePermissions("payables.read")
+  @RequireModule("payables")
   payables(@Req() request: ApiRequest, @Query() query: unknown) {
     return this.finance.payables(request, z.object({
       status: z.enum(["OPEN", "PARTIALLY_PAID", "PAID", "OVERDUE", "CANCELLED"]).optional(),
@@ -60,20 +64,24 @@ export class FinanceController {
   }
   @Get("cash-accounts")
   @RequirePermissions("cash.read")
+  @RequireModule("cash")
   cashAccounts(@Req() request: ApiRequest) { return this.finance.cashAccounts(request); }
   @Get("cash-sessions")
   @RequirePermissions("cash.read")
+  @RequireModule("cash")
   cashSessions(@Req() request: ApiRequest, @Query("status") status: unknown) {
     return this.finance.cashSessions(request, z.enum(["OPEN", "CLOSED", "CANCELLED"]).optional().parse(status));
   }
   @Post("cash-sessions")
   @RequirePermissions("cash.open")
+  @RequireModule("cash")
   open(@Req() request: ApiRequest, @Body() body: unknown) {
     const input = z.object({ cashAccountId: z.uuid(), openingBalance: amount }).parse(body);
     return this.finance.openCashSession(request, input, requireIdempotencyKey(request));
   }
   @Post("cash-sessions/:id/close")
   @RequirePermissions("cash.close")
+  @RequireModule("cash")
   close(@Req() request: ApiRequest, @Param("id") id: string, @Body() body: unknown) {
     const input = z.object({
       countedBalance: amount, differenceReason: z.string().min(5).max(1000).optional()

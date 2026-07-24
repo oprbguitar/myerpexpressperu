@@ -11,10 +11,12 @@ import { z } from "zod";
 import { RequireModule, RequirePermissions } from "../../auth.guard.js";
 import type { ApiRequest } from "../../http.js";
 import { GovernanceService } from "./governance.service.js";
+import { OwnedByModule } from "../../module-ownership.js";
 
 const uuid = z.string().uuid();
 
 @ApiTags("phase3-legal-privacy")
+@OwnedByModule("legal-compliance")
 @Controller()
 export class GovernanceController {
   constructor(private readonly governance: GovernanceService) {}

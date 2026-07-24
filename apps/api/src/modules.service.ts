@@ -10,6 +10,7 @@ import { validateModuleEnablement } from "@erp/domain";
 import { DatabaseService } from "./database.service.js";
 import type { ApiRequest } from "./http.js";
 import { appendAudit } from "./operations.js";
+import { controllersForModule, resourcesForModule } from "./module-ownership.js";
 
 @Injectable()
 export class ModulesService {
@@ -61,18 +62,29 @@ export class ModulesService {
       [code, request.auth!.companyId]
     );
     if (!module) throw new NotFoundException("El módulo no existe.");
+    // El impacto se computa del registro autoritativo (controladores decorados +
+    // recursos no-controlador), no de un texto fijo. Así refleja lo realmente
+    // aplicado por el enforcement (corrige C-2).
+    const apiControllers = controllersForModule(module.code);
+    const resources = resourcesForModule(module.code);
+    const pick = (type: string) => resources.filter((r) => r.resourceType === type).map((r) => r.resourceId);
     return {
       code: module.code,
       name: module.name,
       status: module.status,
       enabledDependents: module.enabledDependents,
-      consequences: [
-        "Se oculta la navegación y los widgets del módulo.",
-        "La API y los jobs protegidos rechazan nuevas operaciones.",
-        "No se realizan llamadas a proveedores del módulo.",
-        "Los datos históricos y la auditoría se conservan."
-      ],
-      canDisable: module.enabledDependents.length === 0
+      canDisable: module.enabledDependents.length === 0,
+      impact: {
+        apiControllers,
+        workerHandlers: pick("WORKER_HANDLER"),
+        scheduledJobs: pick("SCHEDULED_JOB"),
+        frontendRoutes: pick("FRONTEND_ROUTE"),
+        navigationEntries: pick("NAVIGATION_ENTRY"),
+        dashboardWidgets: pick("DASHBOARD_WIDGET"),
+        providers: pick("PROVIDER"),
+        dependentModules: module.enabledDependents,
+        historicalDataPreserved: true
+      }
     };
   }
 
