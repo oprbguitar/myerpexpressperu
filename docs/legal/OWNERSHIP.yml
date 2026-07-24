@@ -1,0 +1,109 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+#
+# Registro legible por máquina de la titularidad de ERP Express Perú.
+# Es la fuente de verdad que consumen las herramientas de licenciamiento.
+
+format: erp-express-peru-ownership
+version: 1
+
+copyright:
+  # Marcador PROVISIONAL. No es una determinación legal.
+  # Se usa este valor colectivo porque el repositorio no contiene una
+  # declaración de titularidad aprobada por el propietario del proyecto.
+  holder: "ERP Express Perú contributors"
+  year: 2026
+  status: provisional
+  declared_by: null
+  declared_on: null
+  evidence: null
+  rationale: >-
+    La política de Fase 4 exige verificar una declaración explícita de
+    titularidad aprobada por el propietario antes de nombrar a AndesNova
+    Solutions o a una persona natural como titular. No se encontró tal
+    declaración en el repositorio, por lo que se aplica el valor colectivo
+    por defecto y se abre una revisión legal.
+
+license:
+  default: MPL-2.0
+  status: provisional
+  approved_by: null
+  approved_on: null
+  rationale: >-
+    MPL-2.0 se adopta como política por defecto según la instrucción de
+    Fase 4: preserva la apertura de los archivos modificados del proyecto,
+    permite combinación con código bajo otras licencias, evita extender
+    copyleft a cada archivo independiente de un producto mayor y mantiene
+    licenciamiento a nivel de archivo. Queda sujeta a aprobación legal final
+    del propietario del proyecto.
+
+# Mapa de licencias por ruta. Las herramientas de verificación lo usan para
+# decidir qué encabezado corresponde a cada archivo.
+license_map:
+  - path: core
+    license: MPL-2.0
+  - path: modules
+    license: MPL-2.0
+  - path: apps
+    license: MPL-2.0
+  - path: packages
+    license: MPL-2.0
+  - path: infrastructure
+    license: MPL-2.0
+  - path: deployment
+    license: MPL-2.0
+  - path: migrations
+    license: MPL-2.0
+  - path: scripts
+    license: MPL-2.0
+  - path: tests
+    license: MPL-2.0
+  - path: docs
+    license: MPL-2.0
+    note: salvo indicación expresa en el propio documento
+  - path: examples
+    license: MIT
+    note: solo cuando estén explícitamente separados; no existen aún
+    exists: false
+  - path: sdk/public
+    license: Apache-2.0
+    note: solo con aprobación expresa del propietario; no existe aún
+    exists: false
+  - path: vendor
+    license: UPSTREAM
+    note: se conserva la licencia original; no existe aún
+    exists: false
+  - path: generated
+    license: MANIFEST
+    note: declarada mediante manifiesto, sin insertar comentarios
+    exists: false
+
+# Rutas excluidas de la verificación de encabezados SPDX.
+header_exclusions:
+  - node_modules
+  - dist
+  - dev-dist
+  - coverage
+  - test-results
+  - playwright-report
+  - .git
+  - pnpm-lock.yaml
+  - LICENSE
+  - "**/*.md"
+  - "**/*.json"
+  - "**/*.png"
+  - "**/*.ico"
+  - "**/*.svg"
+  - "**/*.woff2"
+
+ai_policy:
+  ai_may_hold_copyright: false
+  statement: >-
+    Ningún sistema de IA es autor ni titular de derechos sobre este software.
+    La asistencia de IA se registra como herramienta de desarrollo utilizada
+    bajo dirección y revisión humana.
+  provenance_directory: docs/compliance/ai-provenance/
+  human_review_required: true
+
+open_issues:
+  - docs/legal/OWNERSHIP-REVIEW.md

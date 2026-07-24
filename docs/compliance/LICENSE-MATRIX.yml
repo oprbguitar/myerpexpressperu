@@ -1,0 +1,132 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+#
+# Política de licencias de dependencias. La consume `pnpm license:scan`
+# y `pnpm license:compatibility`.
+#
+# Categorías:
+#   allowed    — uso permitido sin revisión adicional
+#   review     — requiere revisión de licencia, compatibilidad, arquitectura,
+#                impacto de distribución y aprobación escrita antes de usar
+#   prohibited — no se admite sin excepción escrita registrada
+
+format: erp-express-peru-license-matrix
+version: 1
+project_license: MPL-2.0
+project_license_status: provisional # ver docs/legal/OWNERSHIP-REVIEW.md
+
+allowed:
+  - id: MPL-2.0
+  - id: Apache-2.0
+  - id: MIT
+  - id: BSD-2-Clause
+  - id: BSD-3-Clause
+  - id: ISC
+  - id: PostgreSQL
+  - id: Unicode-3.0
+  - id: CC0-1.0
+    note: aplicable a datos o metadatos
+
+  # Las siguientes NO figuraban en la lista inicial de la instrucción de
+  # Fase 4, pero están realmente presentes en el árbol de dependencias.
+  # Se clasifican como permitidas por ser permisivas y compatibles con
+  # MPL-2.0 en uso como dependencia. Decisión registrada, no tácita.
+  - id: BlueOak-1.0.0
+    note: >-
+      Permisiva, aprobada por OSI. Presente en 9 paquetes del ecosistema
+      npm (glob, minimatch, lru-cache y afines). Sin copyleft.
+    added_on: 2026-07-23
+    added_because: detectada en el escaneo de línea base de Fase 4
+  - id: 0BSD
+    note: Permisiva equivalente a dominio público, sin obligación de aviso.
+    added_on: 2026-07-23
+    added_because: detectada en el escaneo de línea base de Fase 4
+  - id: Python-2.0
+    note: Permisiva (PSF). Presente solo en argparse.
+    added_on: 2026-07-23
+    added_because: detectada en el escaneo de línea base de Fase 4
+  - id: CC-BY-4.0
+    note: >-
+      Permitida ÚNICAMENTE para datos o metadatos, no para código. Impone
+      obligación de atribución que se cumple mediante THIRD-PARTY-NOTICES.md.
+      Presente solo en caniuse-lite (datos de compatibilidad de navegadores).
+    restricted_to: data
+    attribution_required: true
+    added_on: 2026-07-23
+    added_because: detectada en el escaneo de línea base de Fase 4
+
+# Expresiones SPDX compuestas y cómo resolverlas.
+compound_resolutions:
+  - expression: "(MIT OR CC0-1.0)"
+    resolve_to: MIT
+    rationale: disyunción; se elige la rama permisiva más común
+  - expression: "(MIT AND Zlib)"
+    resolve_to: [MIT, Zlib]
+    rationale: conjunción; ambas son permisivas y compatibles
+    note: Zlib queda implícitamente permitida por esta resolución
+
+review:
+  - id: LGPL-2.1
+  - id: LGPL-3.0
+  - id: EPL-2.0
+  - id: CDDL-1.0
+  - id: GPL-2.0
+  - id: GPL-3.0
+  - id: AGPL-3.0
+  - id: SSPL-1.0
+  - id: BUSL-1.1
+  - id: Elastic-2.0
+  - id: UNKNOWN
+    note: toda licencia no determinable exige revisión antes de aceptarse
+  - pattern: "Commons-Clause"
+    note: cualquier combinación con Commons Clause
+  - pattern: "source-available"
+    note: licencias fuente-disponible personalizadas
+
+review_requirements:
+  - revisión de licencia
+  - evaluación de compatibilidad con MPL-2.0
+  - revisión de arquitectura (enlace estático, dinámico o servicio)
+  - análisis de impacto en distribución
+  - aprobación escrita del propietario del proyecto
+  - actualización de esta matriz
+
+prohibited:
+  - id: NO-LICENSE
+    note: código fuente sin licencia copiado de repositorios externos
+  - id: PROPRIETARY-UNVERIFIED
+    note: fuente propietaria no verificada
+  - id: NOTICE-STRIPPED
+    note: código con avisos de copyright removidos
+  - id: CONFLICTING
+    note: dependencias con conflictos de licencia no resueltos
+  - id: FORUM-SOURCED
+    note: código copiado de foros sin procedencia
+  - id: UNAUTHORIZED-DERIVATIVE
+    note: código generado a partir de fuente con derechos sin autorización
+
+# Controles específicos sobre copyleft fuerte.
+strong_copyleft_policy:
+  gpl_agpl_into_core: forbidden_without_written_approval
+  agpl_intentional_use_only: true
+  agpl_note: >-
+    AGPL solo puede usarse si el propietario del proyecto quiere
+    deliberadamente que los usuarios que interactúen con una versión
+    modificada en red reciban acceso al código fuente correspondiente.
+    Nunca debe entrar por una dependencia no revisada.
+
+# Excepciones aprobadas. Vacío = ninguna concedida.
+exceptions: []
+
+# Resultado del escaneo de línea base, ejecutado el 2026-07-23.
+baseline_scan:
+  date: 2026-07-23
+  packages_scanned: 768
+  distinct_licenses: 11
+  unknown: 0
+  prohibited_found: 0
+  review_required_found: 0
+  strong_copyleft_found: 0
+  note: >-
+    No se detectó ninguna dependencia GPL, AGPL, LGPL, SSPL, BUSL ni
+    Elastic en el árbol de producción y desarrollo.

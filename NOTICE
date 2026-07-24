@@ -1,0 +1,43 @@
+ERP Express Perú
+Copyright 2026 ERP Express Perú contributors
+
+This product is licensed under the Mozilla Public License, Version 2.0.
+You may obtain a copy of the License in the LICENSE file distributed with
+this work, or at https://mozilla.org/MPL/2.0/.
+
+--------------------------------------------------------------------------
+ATTENTION — PROVISIONAL COPYRIGHT ATTRIBUTION
+--------------------------------------------------------------------------
+
+The holder named above ("ERP Express Perú contributors") is a PROVISIONAL
+placeholder. As of the date of this file, the project does not contain an
+ownership declaration approved by the project owner.
+
+This attribution must not be relied upon as a settled legal determination
+of copyright ownership. It was chosen as the conservative default so that
+no specific natural or legal person is asserted as holder without evidence.
+
+See docs/legal/OWNERSHIP-REVIEW.md for the open questions that must be
+resolved, and docs/legal/OWNERSHIP.yml for the machine-readable record.
+
+--------------------------------------------------------------------------
+AI ASSISTANCE
+--------------------------------------------------------------------------
+
+Portions of this software were produced with the assistance of AI-based
+development tools operating under human direction. Such tools are recorded
+as instruments of development only. No AI system is, or is claimed to be,
+an author or a copyright holder of any part of this work.
+
+Records of AI-assisted changes are kept in docs/compliance/ai-provenance/.
+An AI-assisted change is not considered accepted until a human reviewer has
+reviewed it and recorded that acceptance. Records carrying
+"accepted: false" or "human_reviewer: pending" have NOT been reviewed.
+
+--------------------------------------------------------------------------
+THIRD-PARTY SOFTWARE
+--------------------------------------------------------------------------
+
+This product includes third-party software governed by their own licenses.
+Those licenses and copyright notices are preserved and are not superseded
+by the license of this product. See THIRD-PARTY-NOTICES.md.
