@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0008
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: b5e0097
+component: stabilization/S0
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Etapa S0 de la estabilización Fase 4A-0: línea base y diagnóstico del acceso
+  local a http://localhost:5273/ antes de tocar base de datos o arquitectura.
+
+generated_or_modified_scope: >-
+  Diagnóstico de acceso local (causa: el dev server no estaba corriendo).
+  Creación de la etiqueta de línea base, archivo del informe previo, guía de
+  acceso local sanitizada y archivo de credenciales gitignored. Un cambio
+  especulativo en el service worker se probó y se revirtió por regresión.
+
+files:
+  - .gitignore
+  - docs/stabilization/S0-BASELINE.md
+  - docs/stabilization/LOCALHOST-DIAGNOSIS.md
+  - docs/local/LOCAL-ACCESS-GUIDE.md
+  - docs/reports/archive/SYSTEM-STATE-REPORT-pre-stabilization-20260723.md
+
+tests_executed:
+  - name: arranque del dev server web + verificación en navegador real
+    result: pass
+    detail: app sirve 200, login renderiza, consola sin errores, API health 200
+  - name: pnpm test:e2e tras revertir el cambio de service worker
+    result: pass
+    detail: 18 pasadas, 6 omitidas, exit 0
+  - name: suite de línea base (lint, typecheck, unit, integration, compliance, build, audit)
+    result: pass
+    detail: todos exit 0 con infraestructura levantada
+
+security_review: not_applicable
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+
+limitations:
+  - >-
+    Solo se completó S0. Las etapas S1 (roles RLS), S2 (enforcement de módulos),
+    S3 (CI y fail-closed), S4-S9 NO se ejecutaron.
+  - >-
+    La "verdura" de la línea base depende de la infraestructura levantada; el
+    defecto C-4 (integración que sale 0 sin base) sigue abierto hasta S3.
+  - >-
+    No se capturó captura de pantalla del navegador (el panel no estaba
+    compositando); la evidencia de render proviene del texto de la página y de
+    la ausencia de errores de consola.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.
