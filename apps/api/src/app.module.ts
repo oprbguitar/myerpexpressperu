@@ -14,6 +14,7 @@ import { AuthGuard } from "./auth.guard.js";
 import { AuthService } from "./auth.service.js";
 import { DatabaseModule } from "./database.module.js";
 import { ApiExceptionFilter, LocalRateLimitInterceptor, RequestIdInterceptor } from "./http.js";
+import { TenantContextInterceptor } from "./tenant-context.interceptor.js";
 import { Phase3IntelligenceModule } from "./phase3/index.js";
 import {
   Phase3AdminController, Phase3AssetsController, Phase3CrmController,
@@ -70,6 +71,7 @@ import { PdfService } from "./pdf.service.js";
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_INTERCEPTOR, useClass: RequestIdInterceptor },
     { provide: APP_INTERCEPTOR, useClass: LocalRateLimitInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: TenantContextInterceptor },
     { provide: APP_FILTER, useClass: ApiExceptionFilter }
   ]
 })

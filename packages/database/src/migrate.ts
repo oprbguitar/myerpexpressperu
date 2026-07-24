@@ -10,8 +10,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PostgresDatabase } from "./index.js";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) throw new Error("DATABASE_URL es obligatorio.");
+// Las migraciones usan el rol de migración (propietario/superusuario), nunca el
+// rol de aplicación restringido. Si no se define, se cae a DATABASE_URL para no
+// romper entornos locales que aún no separan roles.
+const connectionString = process.env.DATABASE_MIGRATION_URL ?? process.env.DATABASE_URL;
+if (!connectionString) throw new Error("DATABASE_MIGRATION_URL o DATABASE_URL es obligatorio.");
 const database = new PostgresDatabase(connectionString);
 const migrationsDirectory = join(dirname(fileURLToPath(import.meta.url)), "../../../migrations");
 

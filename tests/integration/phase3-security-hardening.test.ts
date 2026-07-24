@@ -10,8 +10,13 @@ import type { PoolClient } from "pg";
 import { afterAll, describe, expect, it } from "vitest";
 import { PostgresDatabase } from "../../packages/database/src/index.js";
 
-const enabled = Boolean(process.env.DATABASE_URL);
-const database = enabled ? new PostgresDatabase(process.env.DATABASE_URL!) : null;
+// Estas pruebas verifican restricciones de esquema (claves foráneas compuestas,
+// triggers de solo-anexado), no aislamiento RLS. Provisionan datos de varios
+// tenants, por lo que usan el rol propietario (DATABASE_MIGRATION_URL). El
+// aislamiento RLS se prueba por separado en rls-isolation.test.ts con erp_app.
+const ownerUrl = process.env.DATABASE_MIGRATION_URL ?? process.env.DATABASE_URL;
+const enabled = Boolean(ownerUrl);
+const database = enabled ? new PostgresDatabase(ownerUrl!) : null;
 
 interface TestScopes {
   tenantA: string;

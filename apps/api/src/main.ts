@@ -13,6 +13,7 @@ import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, type NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module.js";
+import { DatabaseService } from "./database.service.js";
 import { config } from "./config.js";
 
 /**
@@ -36,6 +37,24 @@ const adapter = new FastifyAdapter({
   logger: { level: process.env.LOG_LEVEL ?? "info" }
 });
 const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
+
+// Guarda de arranque: el rol de runtime jamás debe ser superusuario ni tener
+// BYPASSRLS, porque eso anularía por completo las políticas RLS (hallazgo C-1).
+// En producción se rechaza el arranque; fuera de producción se advierte.
+{
+  const database = app.get(DatabaseService);
+  const [role] = await database.query<{ rolsuper: boolean; rolbypassrls: boolean; current_user: string }>(
+    "select rolsuper,rolbypassrls,current_user from pg_roles where rolname=current_user"
+  );
+  if (role?.rolsuper || role?.rolbypassrls) {
+    const message =
+      `El rol de base de datos del runtime ('${role.current_user}') tiene ` +
+      `SUPERUSER=${role.rolsuper} BYPASSRLS=${role.rolbypassrls}. Esto anula RLS. ` +
+      `Use un rol restringido (erp_app) en DATABASE_URL.`;
+    if (config.NODE_ENV === "production") throw new Error(message);
+    console.warn(`ADVERTENCIA (no producción): ${message}`);
+  }
+}
 await app.register(cookie);
 await app.register(helmet, {
   contentSecurityPolicy: {

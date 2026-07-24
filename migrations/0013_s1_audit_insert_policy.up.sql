@@ -1,0 +1,12 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
+--
+-- audit_events solo tenía política de SELECT (lectura por tenant). Con FORCE RLS
+-- y el rol restringido erp_app, los INSERT quedaban denegados por falta de
+-- política, rompiendo el login (que escribe auditoría antes de fijar contexto)
+-- y toda escritura de auditoría.
+--
+-- La auditoría es un registro de solo anexado, escrito por el servidor y ya
+-- protegido contra UPDATE/DELETE por triggers. Se permite el INSERT mientras la
+-- lectura sigue restringida por tenant mediante la política de SELECT existente.
+create policy audit_insert on audit_events for insert with check (true);

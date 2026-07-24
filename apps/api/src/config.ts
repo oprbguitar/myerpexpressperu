@@ -12,7 +12,12 @@ const schema = z.object({
   APP_ENVIRONMENT: z.enum(["development", "test", "demo", "production"]).default("development"),
   APP_URL: z.url(),
   APP_PUBLIC_URL: z.url().optional(),
+  // Rol de aplicación restringido (erp_app): sin SUPERUSER ni BYPASSRLS.
   DATABASE_URL: z.string().min(1),
+  // Rol de migración (superusuario/propietario). Solo lo usan las migraciones,
+  // nunca el runtime de API o worker. Si falta, cae a DATABASE_URL para
+  // compatibilidad local, pero producción debe declararlo por separado.
+  DATABASE_MIGRATION_URL: z.string().min(1).optional(),
   SESSION_SECRET: z.string().min(32),
   SESSION_TTL: z.coerce.number().int().positive().default(28800),
   PASSWORD_RESET_TTL: z.coerce.number().int().positive().default(1800),

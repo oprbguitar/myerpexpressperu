@@ -12,10 +12,14 @@ import { PostgresDatabase } from "./index.js";
 import { seedPhase2DemonstrationData } from "./phase2-seed.js";
 import { seedPhase3Foundation } from "./phase3-seed.js";
 
-const required = ["DATABASE_URL", "SEED_ADMIN_EMAIL", "SEED_ADMIN_PASSWORD"] as const;
+const required = ["SEED_ADMIN_EMAIL", "SEED_ADMIN_PASSWORD"] as const;
 for (const key of required) if (!process.env[key]) throw new Error(`${key} es obligatorio para crear la semilla.`);
+// La semilla provisiona datos de varios tenants, por lo que corre con el rol de
+// migración (propietario), no con el rol de aplicación sujeto a RLS.
+const seedConnection = process.env.DATABASE_MIGRATION_URL ?? process.env.DATABASE_URL;
+if (!seedConnection) throw new Error("DATABASE_MIGRATION_URL o DATABASE_URL es obligatorio para crear la semilla.");
 
-const database = new PostgresDatabase(process.env.DATABASE_URL!);
+const database = new PostgresDatabase(seedConnection);
 const tenantId = "00000000-0000-4000-8000-000000000001";
 const companyId = "00000000-0000-4000-8000-000000000002";
 const branchId = "00000000-0000-4000-8000-000000000003";

@@ -7,8 +7,17 @@
  */
 import { PostgresDatabase } from "@erp/database";
 
-if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL es obligatorio.");
-const database = new PostgresDatabase(process.env.DATABASE_URL);
+// El worker es hoy un escáner de sistema entre tenants: recorre las cuentas,
+// stock y documentos de TODOS los tenants y genera notificaciones. Ese diseño
+// es incompatible con RLS por tenant sin el rediseño de la etapa S7 (reclamar
+// trabajos por tenant y fijar contexto por evento). Hasta entonces usa un rol
+// privilegiado. No tiene superficie HTTP ni entrada de usuario, por lo que el
+// riesgo de escalado por inyección —el hallazgo C-1 de la API— no aplica aquí.
+// La API, superficie expuesta, sí corre con el rol restringido erp_app.
+const workerConnection =
+  process.env.DATABASE_WORKER_URL ?? process.env.DATABASE_MIGRATION_URL ?? process.env.DATABASE_URL;
+if (!workerConnection) throw new Error("DATABASE_MIGRATION_URL o DATABASE_URL es obligatorio para el worker.");
+const database = new PostgresDatabase(workerConnection);
 let stopping = false;
 
 async function runCycle(): Promise<void> {
