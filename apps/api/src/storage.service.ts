@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 import { Injectable } from "@nestjs/common";
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";

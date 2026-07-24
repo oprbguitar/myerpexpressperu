@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop table if exists catalog_items, catalog_types, company_settings, system_settings, audit_events,
 documents, login_attempts, password_reset_tokens, sessions, company_modules, modules, user_roles,
 role_permissions, permissions, roles, user_branches, user_companies, cost_centers,

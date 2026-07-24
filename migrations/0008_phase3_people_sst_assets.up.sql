@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- Phase 3: lightweight HR, occupational safety, assets and maintenance.
 
 create table employees (

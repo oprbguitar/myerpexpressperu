@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop table if exists asset_incidents, meter_readings, maintenance_costs, maintenance_parts,
   maintenance_tasks, maintenance_work_orders, maintenance_schedules, maintenance_plans,
   asset_status_history, asset_assignments, assets, asset_locations, asset_categories,

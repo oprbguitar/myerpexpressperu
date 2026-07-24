@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 const referencePart = /^[a-z][a-z0-9-]{1,62}$/;
 const secretReference = /^secretref:v1:([a-z][a-z0-9-]{1,62}):([a-z][a-z0-9-]{1,62}):([a-z0-9][a-z0-9.-]{0,31})$/;
 

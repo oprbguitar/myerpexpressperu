@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- Phase 3: administrative control plane, CRM, projects, time and expenses.
 -- Executed transactionally by packages/database/src/migrate.ts.
 

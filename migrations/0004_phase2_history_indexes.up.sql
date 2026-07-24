@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- Phase 2 hardening: immutable operational history and missing FK lookup indexes.
 
 create rule stock_movements_no_update as on update to stock_movements do instead nothing;

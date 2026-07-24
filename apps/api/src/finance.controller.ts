@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 import { Body, Controller, Get, Param, Post, Query, Req } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { z } from "zod";

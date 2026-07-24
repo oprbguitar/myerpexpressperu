@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- Replace rewrite rules with triggers so INSERT ... ON CONFLICT remains legal.
 
 create or replace function reject_history_mutation()

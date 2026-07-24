@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- ERP Express Perú - Fase 2
 -- Operaciones comerciales, inventario básico, caja y documentos.
 

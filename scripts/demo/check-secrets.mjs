@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 import { readFile, readdir, stat } from "node:fs/promises";
 import { basename, extname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";

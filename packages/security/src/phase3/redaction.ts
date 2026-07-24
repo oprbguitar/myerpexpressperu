@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 const sensitiveKey = /password|passphrase|authorization|cookie|secret|token|api[_-]?key|private[_-]?key|diagnos|medical|health/i;
 const bearerValue = /\bBearer\s+[A-Za-z0-9._~+/=-]+\b/gi;
 const emailValue = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;

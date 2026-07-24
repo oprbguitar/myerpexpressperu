@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 const baseUrl = String(import.meta.env.VITE_API_URL || "http://localhost:3100/api/v1");
 
 export class ApiError extends Error {

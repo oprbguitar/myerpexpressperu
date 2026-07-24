@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop view if exists consent_record_effective_status;
 drop view if exists legal_acceptance_effective_status;
 drop table if exists consent_withdrawals;

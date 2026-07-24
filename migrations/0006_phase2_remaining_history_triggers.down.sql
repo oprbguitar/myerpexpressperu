@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop trigger if exists commercial_document_events_no_delete on commercial_document_events;
 drop trigger if exists commercial_document_events_no_update on commercial_document_events;
 drop trigger if exists cash_movements_no_delete on cash_movements;

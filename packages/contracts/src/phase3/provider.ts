@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * Registros de asistencia de IA, cuando corresponda:
+ * docs/compliance/ai-provenance/
+ */
 export const PROVIDER_MODES = ["DISABLED", "MANUAL", "LOCAL", "MOCK", "CLOUD"] as const;
 export type ProviderMode = (typeof PROVIDER_MODES)[number];
 

@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop trigger if exists payments_no_delete on payments;
 drop trigger if exists payment_applications_no_delete on payment_applications;
 drop trigger if exists payment_applications_no_update on payment_applications;

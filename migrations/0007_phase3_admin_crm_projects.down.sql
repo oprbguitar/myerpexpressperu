@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop table if exists project_status_history, project_change_requests, project_issues,
   project_risks, project_expenses, project_time_entries, project_costs,
   project_budget_versions, project_budgets, project_deliverables, task_dependencies,

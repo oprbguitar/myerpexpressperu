@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop table if exists audit_integrity_checkpoints, security_events, system_metrics,
   demo_reset_history, demo_reset_jobs, demo_snapshots, demo_scenarios, demo_profiles,
   provider_usage_records, provider_health_checks, provider_configurations, provider_definitions,

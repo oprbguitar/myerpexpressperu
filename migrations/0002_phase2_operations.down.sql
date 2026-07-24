@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop table if exists notification_preferences, notifications, outbox_events, idempotency_keys,
   export_jobs, import_job_rows, import_jobs, exchange_rates, currencies,
   bank_account_references, cash_movements, payment_applications, payments, cash_sessions,

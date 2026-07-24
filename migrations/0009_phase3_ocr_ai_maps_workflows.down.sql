@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop table if exists workflow_simulations, workflow_executions, workflow_rule_versions,
   workflow_rules, geographical_aggregates, geocoding_attempts, geo_locations,
   ai_incidents, ai_usage_budgets, ai_feedback, ai_tool_calls, ai_interactions,

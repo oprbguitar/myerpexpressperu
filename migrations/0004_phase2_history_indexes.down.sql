@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 drop index if exists payments_reversed_payment;
 drop index if exists stock_movements_linked;
 drop index if exists payment_applications_reversal;

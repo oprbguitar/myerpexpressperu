@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- Complete Phase 2 append-only trigger conversion.
 
 drop rule if exists cash_movements_no_update on cash_movements;

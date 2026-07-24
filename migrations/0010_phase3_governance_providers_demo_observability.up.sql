@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+-- SPDX-License-Identifier: MPL-2.0
 -- Phase 3: legal/privacy governance, provider management, demo safety and observability.
 
 create table legal_documents (
