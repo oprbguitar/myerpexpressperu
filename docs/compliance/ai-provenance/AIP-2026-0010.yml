@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0010
+date: 2026-07-24
+repository: erp-express-peru
+branch: master
+commit: 56ccefe
+component: stabilization
+development_tool: Claude Code
+model: claude-opus-4-8
+human_request_summary: >-
+  S1: rol restringido erp_app y RLS efectiva
+generated_or_modified_scope: >-
+  Separación de roles PostgreSQL; contexto de tenant por petición vía AsyncLocalStorage; FORCE RLS en 189 tablas; guarda de arranque. Aislamiento entre tenants probado por comportamiento a través de erp_app.
+files_summary: "apps/api/src/{request-context,tenant-context.interceptor,database.service,main,config,app.module}.ts, apps/worker/src/main.ts, packages/database/src/{migrate,seed}.ts, migrations/0012-0013, tests/integration/rls-isolation.test.ts"
+tests_executed:
+  - name: pnpm phase4:verify
+    result: pass
+    detail: lint, typecheck, 86 unit, 22 integración, build, compliance (exit 0)
+security_review: >-
+  Realizada por esta sesión; requiere confirmación humana independiente.
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+limitations:
+  - Sin revisión humana. Este registro no está aceptado.

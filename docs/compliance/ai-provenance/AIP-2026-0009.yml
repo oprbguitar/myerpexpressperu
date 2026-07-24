@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0009
+date: 2026-07-24
+repository: erp-express-peru
+branch: master
+commit: 8cbd92f
+component: stabilization
+development_tool: Claude Code
+model: claude-opus-4-8
+human_request_summary: >-
+  fix(web): SUNAT white screen + error boundary
+generated_or_modified_scope: >-
+  Corrección de deriva de contrato en SunatPage (mode/messages) que causaba pantalla en blanco por TypeError; se añadió un ErrorBoundary de React (no existía ninguno). Verificado en navegador real: la página renderiza sin errores de consola.
+files_summary: "apps/web/src/features/sunat/pages/SunatPage.tsx, apps/web/src/components/ErrorBoundary.tsx, apps/web/src/App.tsx"
+tests_executed:
+  - name: pnpm phase4:verify
+    result: pass
+    detail: lint, typecheck, 86 unit, 22 integración, build, compliance (exit 0)
+security_review: >-
+  Realizada por esta sesión; requiere confirmación humana independiente.
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+limitations:
+  - Sin revisión humana. Este registro no está aceptado.

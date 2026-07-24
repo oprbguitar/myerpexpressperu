@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0011
+date: 2026-07-24
+repository: erp-express-peru
+branch: master
+commit: cd11289
+component: stabilization
+development_tool: Claude Code
+model: claude-opus-4-8
+human_request_summary: >-
+  S3: integración en cerrado y CI
+generated_or_modified_scope: >-
+  test:integration falla sin base y prohíbe omitir en CI; workflow de CI con PostgreSQL; cobertura medible (@vitest/coverage-v8). Baseline: domain 79.76%, security 81.46%, api 11.03%.
+files_summary: "scripts/test/run-integration.mjs, .github/workflows/ci.yml, package.json, docs/stabilization/{S3,COVERAGE-BASELINE}.md"
+tests_executed:
+  - name: pnpm phase4:verify
+    result: pass
+    detail: lint, typecheck, 86 unit, 22 integración, build, compliance (exit 0)
+security_review: >-
+  Realizada por esta sesión; requiere confirmación humana independiente.
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+limitations:
+  - Sin revisión humana. Este registro no está aceptado.

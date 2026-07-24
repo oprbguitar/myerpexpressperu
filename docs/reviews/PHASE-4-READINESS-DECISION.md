@@ -10,6 +10,15 @@
 PHASE_4_NOT_READY
 ```
 
+> **Actualización 2026-07-24 (estabilización S0/S1/S3).** El veredicto se mantiene,
+> pero varias condiciones han avanzado. Gate B pasó de FAIL a CONDITIONAL_PASS
+> (rol restringido + FORCE RLS + prueba de comportamiento implementados; faltan
+> checksums de migración, S5). Gate E pasó de FAIL a CONDITIONAL_PASS (integración
+> en cerrado + CI + cobertura medible; faltan pruebas HTTP de la superficie y e2e
+> en CI). Gates A, C, D y F sin cambios. Detalle por etapa en
+> `docs/stabilization/`. El veredicto global no cambia hasta que **todas** las
+> puertas técnicas obligatorias pasen.
+
 ## Clasificación de puertas (§20)
 
 | Puerta | Criterio | Estado | Fundamento |

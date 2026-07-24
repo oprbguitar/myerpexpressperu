@@ -39,6 +39,29 @@ superseded_health_assessment_by: docs/reviews/EXECUTIVE-TECHNICAL-REVIEW.md
 > **Ante cualquier contradicción entre este documento y los de `docs/reviews/`,
 > prevalecen los de `docs/reviews/`.**
 
+> ## 🔧 ESTABILIZACIÓN EN CURSO (Fase 4A-0, actualizado 2026-07-24)
+>
+> Tras la verificación se inició la estabilización. **Etapas completadas: S0, S1,
+> S3.** Detalle en `docs/stabilization/` y en §3.7 de este documento.
+>
+> - **C-1 (RLS inerte): CORREGIDO Y VERIFICADO.** La API ya no conecta como
+>   superusuario: usa el rol restringido `erp_app` (sin BYPASSRLS, no
+>   propietario) y RLS se aplica de verdad en 189 tablas. Aislamiento entre
+>   tenants probado por comportamiento (lectura cruzada → 0 filas; escritura
+>   cruzada → bloqueada 42501).
+> - **C-3 (proxy falsificable): CORREGIDO** (en la verificación previa).
+> - **C-4 (integración que se autodesactiva): CORREGIDO.** `test:integration`
+>   ahora falla sin base y prohíbe omitir en CI.
+> - **H-7 (sin CI): CORREGIDO.** Existe `.github/workflows/ci.yml`.
+> - **H-6 (cobertura inmedible): CORREGIDO.** Baseline medido.
+> - **Además:** pantalla en blanco de SUNAT corregida (deriva de contrato) y
+>   añadido un ErrorBoundary de React (no existía).
+> - **Sigue abierto:** C-2 (enforcement de módulos, S2), H-1 (dominio muerto),
+>   H-3 (API sin pruebas), H-4 (worker), MIG-1 (checksums), y S4–S9.
+>
+> **El veredicto global sigue siendo `PHASE_4_NOT_READY`** hasta que pasen todas
+> las puertas técnicas obligatorias.
+
 ---
 
 ## 0. Metadatos de interpretación
@@ -79,17 +102,20 @@ Usada en todo el documento:
 | Líneas de código (apps + packages) | 21 388 | `wc -l` |
 | Tablas en base de datos | 208 | `grep create table migrations/*.up.sql` |
 | Migraciones (pares up/down) | 11 | `ls migrations/` |
-| Políticas RLS | 16 | `grep create policy` |
+| Políticas RLS (tablas con política) | **189** | `pg_policies` en la base viva (la métrica previa «16» era un artefacto de `grep`) |
+| Tablas con `FORCE ROW LEVEL SECURITY` | **189** | tras S1 (antes 0) |
+| Roles de base de datos | 2 (`erp` migración, `erp_app` runtime) | tras S1 (antes 1 superusuario) |
+| Migraciones (pares up/down) | **13** | `ls migrations/` (tras S1: 0012, 0013) |
 | Triggers | 25 | `grep create trigger` |
 | Permisos definidos | 199 | `packages/database/src/seed.ts` |
-| Roles predefinidos | 6 | seed |
+| Roles de aplicación predefinidos | 6 | seed |
 | Módulos en el registro | 47 | `packages/domain/src/index.ts:198` |
-| Módulos con `implemented: true` | 43 | registro |
 | Módulos con `implemented: false` | 4 | registro |
 | Endpoints HTTP | ~147 | conteo de decoradores en controladores |
-| Controladores NestJS | 25 | `find apps/api/src -name "*.controller.ts"` |
-| Páginas React | 24 | `find apps/web -name "*Page*.tsx"` |
-| Pruebas totales | 136 | ejecución real |
+| Pruebas totales | **142** | ejecución real (86 unit + 22 integración + 15 compliance + 18 e2e + 1 db) |
+| Cobertura (domain / security / api) | 79.8% / 81.5% / 11.0% | `@vitest/coverage-v8`, S3 |
+| Trabajos de CI | 5 | `.github/workflows/ci.yml`, S3 |
+| Registros de procedencia | 11 | `docs/compliance/ai-provenance/` (todos sin revisión humana) |
 
 Distribución de código:
 
@@ -357,22 +383,44 @@ hipótesis y contrastó contra la base de datos y la API en ejecución. Cada uno
 
 | ID | Hallazgo | Severidad | Estado |
 | --- | --- | --- | --- |
-| C-1 | La app conecta a PostgreSQL como **superusuario con `BYPASSRLS`**; las 16 políticas RLS están **inertes**. Lectura cruzada real devolvió 3 filas en vez de 0, incluso con `FORCE`. El aislamiento se sostiene solo por filtrado de aplicación. | **Crítica** | Documentado; requiere decisión humana D-8 |
-| C-2 | **Desactivar un módulo no protege los ~80 endpoints de Fase 1/2**, y `disable-impact` afirma al operador que sí. Probado: con `dashboard` y `cash` deshabilitados, sus endpoints siguen devolviendo 200. `@RequireModule` solo se usa en Fase 3. | **Crítica** | Documentado, no corregido |
-| C-3 | `trustProxy: true` incondicional: **IP falsificable y limitador de tasa evadible** (IP rotada → 150×200, 0×429). Esa IP alimenta auditoría y evidencia legal. | **Crítica** | ✅ **Corregido** (`TRUSTED_PROXIES`), reclasificado a `REQUIRES_CONFIGURATION` |
-| C-4 | **La suite de integración se autodesactiva**: sin `DATABASE_URL`, las 17 pruebas se omiten y el comando **sale 0**. `phase4:verify` lo invoca. No hay CI. | **Crítica** | Documentado, no corregido |
-| H-1 | **La capa de dominio de Fase 3 es código muerto** (869 líneas, 27 funciones sin referencias fuera de sus pruebas). El runtime es CRUD genérico. Sus 25 pruebas verdes no prueban comportamiento del sistema. | Alta | Documentado; requiere decisión humana D-7 |
-| H-2 | **RLS se afirma pero nunca se ejerce**: 14 de 17 pruebas de integración solo consultan `information_schema`. | Alta | Documentado, no corregido |
-| H-3 | **73 archivos de API sin pruebas**, incluidos `auth.guard.ts`, `auth.service.ts`, `storage.service.ts`, `csv.ts`. | Alta | Documentado, no corregido |
-| H-4 | **El worker ignora la activación de módulos**: usa el resultado solo para una línea de log. | Alta | Documentado, no corregido |
-| H-6 | **Sin herramienta de cobertura**: la cobertura no es baja, es inmedible. | Alta | Documentado, no corregido |
-| H-7 | **Sin CI**: no existe `.github/`. Los scripts de verificación son manuales. | Alta | Documentado, no corregido |
+| C-1 | La app conectaba a PostgreSQL como **superusuario con `BYPASSRLS`**; las políticas RLS estaban **inertes**. Lectura cruzada real devolvía 3 filas en vez de 0. | **Crítica** | ✅ **`FIXED_VERIFIED` (S1)**: rol `erp_app` restringido + FORCE RLS en 189 tablas + contexto por petición. Lectura cruzada → 0, escritura cruzada → 42501. |
+| C-2 | **Desactivar un módulo no protege los ~80 endpoints de Fase 1/2**, y `disable-impact` afirma al operador que sí. `@RequireModule` solo se usa en Fase 3. | **Crítica** | `OPEN` — corresponde a la etapa S2 (aún no ejecutada) |
+| C-3 | `trustProxy: true` incondicional: **IP falsificable y limitador de tasa evadible**. | **Crítica** | ✅ `FIXED_VERIFIED` (`TRUSTED_PROXIES`), reclasificado a `REQUIRES_CONFIGURATION` |
+| C-4 | **La suite de integración se autodesactiva**: sin `DATABASE_URL`, las pruebas se omiten y el comando **sale 0**. | **Crítica** | ✅ **`FIXED_VERIFIED` (S3)**: `test:integration` falla sin base; en CI se prohíbe omitir; guarda de conteo. |
+| H-1 | **La capa de dominio de Fase 3 es código muerto** (869 líneas). Sus 25 pruebas verdes no prueban comportamiento. | Alta | `BLOCKED_HUMAN_DECISION` (D-7) — etapa S6 |
+| H-2 | **RLS se afirma pero nunca se ejerce**: pruebas solo consultan `information_schema`. | Alta | ✅ **`FIXED_VERIFIED` (S1)**: `rls-isolation.test.ts` prueba denegación real a través de `erp_app`. |
+| H-3 | **73 archivos de API sin pruebas**, incluidos `auth.guard.ts`. | Alta | `OPEN` — medido (apps/api 11% cobertura) en S3; pruebas HTTP pendientes |
+| H-4 | **El worker ignora la activación de módulos.** | Alta | `OPEN` — etapa S2/S7 |
+| H-6 | **Sin herramienta de cobertura**: la cobertura era inmedible. | Alta | ✅ **`FIXED` (S3)**: `@vitest/coverage-v8`, baseline medido |
+| H-7 | **Sin CI**: no existe `.github/`. | Alta | ✅ **`FIXED` (S3)**: `ci.yml` con 5 trabajos (validez real al primer push) |
+| VAL-1 | Errores de validación devuelven **500 en vez de 400**. | Media | `OPEN` — etapa S4 |
 
-**Veredicto de la verificación: `PHASE_4_NOT_READY`** — 5 de 6 puertas en FAIL,
-1 en CONDITIONAL_PASS. Ver
-[`docs/reviews/PHASE-4-READINESS-DECISION.md`](reviews/PHASE-4-READINESS-DECISION.md)
-para la clasificación por puerta y las condiciones obligatorias antes de
-cualquier módulo sectorial.
+**Veredicto de la verificación: sigue `PHASE_4_NOT_READY`.** La estabilización ha
+cerrado C-1, C-3, C-4, H-2, H-6, H-7; siguen abiertos C-2, H-1, H-3, H-4, VAL-1 y
+las etapas S2, S4–S9. Ver §3.7 y `docs/stabilization/`.
+
+## 3.7 Progreso de estabilización (Fase 4A-0)
+
+| Etapa | Alcance | Estado |
+| --- | --- | --- |
+| S0 | Línea base + diagnóstico de acceso local | ✅ Completa. `localhost:5273` no cargaba porque el dev server no estaba corriendo. |
+| S1 | Roles PostgreSQL + RLS efectiva | ✅ Completa y verificada. `docs/stabilization/S1-RLS-REMEDIATION.md` |
+| S2 | Enforcement de módulos en runtime | ⬜ Pendiente (cierra C-2, H-4) |
+| S3 | Integración en cerrado + CI | ✅ Completa. `docs/stabilization/S3-TEST-CI-REMEDIATION.md` |
+| S4 | Normalización de errores de API | ⬜ Pendiente (cierra VAL-1) |
+| S5 | Integridad de migraciones (checksums) | ⬜ Pendiente (MIG-1) |
+| S6 | Alineación dominio-runtime | ⬜ Pendiente (H-1, decisión D-7) |
+| S7 | Fiabilidad del worker | ⬜ Pendiente (H-4, WORKER-1) |
+| S8 | Arquitectura y madurez de módulos | ⬜ Pendiente |
+| S9 | Verificación final | ⬜ Pendiente |
+
+Correcciones adicionales de esta sesión, fuera de las etapas numeradas:
+
+- **Pantalla en blanco de SUNAT básico**: deriva de contrato (`SunatPage` leía
+  `provider`/`warnings`; la API devuelve `mode`/`messages`). Corregido y
+  verificado en navegador real.
+- **ErrorBoundary de React**: no existía ninguno, por lo que cualquier error de
+  render dejaba la app en blanco. Añadido, contiene el fallo por página.
 
 ---
 
