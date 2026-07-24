@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0004
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: f4e0388
+component: compliance/escaneo-procedencia-sbom
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Completar los pasos 1 y 2 de la Fase 4: escaneo de licencias de
+  dependencias, esquema y verificador de procedencia de IA, generación de
+  SBOM y pruebas de cumplimiento.
+
+generated_or_modified_scope: >-
+  Implementación de scripts/license/scan.mjs, compatibility.mjs y
+  notices.mjs; scripts/provenance/verify.mjs; scripts/sbom/generate.mjs.
+  Creación de docs/compliance/AI-PROVENANCE.yml y COMPONENT-OWNERS.yml, y
+  de los registros AIP-2026-0001 a 0004. Generación de
+  THIRD-PARTY-NOTICES.md. Añadido de 15 pruebas de cumplimiento. Corrección
+  de dos defectos preexistentes en el generador de SBOM de la Fase 3.
+
+files:
+  - scripts/license/scan.mjs
+  - scripts/license/compatibility.mjs
+  - scripts/license/notices.mjs
+  - scripts/provenance/verify.mjs
+  - scripts/sbom/generate.mjs
+  - scripts/demo/generate-sbom.mjs
+  - docs/compliance/AI-PROVENANCE.yml
+  - docs/compliance/COMPONENT-OWNERS.yml
+  - docs/compliance/LICENSE-MATRIX.yml
+  - docs/compliance/ai-provenance/AIP-2026-0001.yml
+  - docs/compliance/ai-provenance/AIP-2026-0002.yml
+  - docs/compliance/ai-provenance/AIP-2026-0003.yml
+  - docs/compliance/ai-provenance/AIP-2026-0004.yml
+  - tests/compliance/licensing.test.ts
+  - THIRD-PARTY-NOTICES.md
+  - package.json
+
+tests_executed:
+  - name: pnpm phase4:verify
+    result: pass
+    detail: >-
+      Cadena completa: lint, typecheck, 86 pruebas unitarias, 17 de
+      integración, build y compliance:verify. Código de salida 0.
+  - name: pnpm test:compliance
+    result: pass
+    detail: >-
+      15 pruebas: clasificación de licencias, rechazo de copyleft fuerte,
+      resolución de expresiones compuestas, sintaxis de encabezados SPDX,
+      protección de avisos de terceros e integridad de procedencia.
+  - name: pnpm license:scan
+    result: pass
+    detail: 769 paquetes, 0 en revisión, 0 prohibidos
+  - name: pnpm demo:verify / sbom:generate / licenses:check
+    result: pass
+    detail: la corrección del generador de SBOM no rompió la ruta demo
+
+security_review: not_applicable
+license_review: completed_by_tool_pending_human
+human_reviewer: pending
+review_date: null
+accepted: false
+
+defects_fixed:
+  - id: SBOM-1
+    description: >-
+      El generador de SBOM de la Fase 3 corrompía nombre y versión de los
+      paquetes con sufijo de dependencias de pares. pnpm escribe claves como
+      "@apideck/better-ajv-errors@0.3.7(ajv@8.20.0)" y el uso del último "@"
+      separaba por la dependencia de pares.
+    severity: alta
+    status: corregido
+  - id: SBOM-2
+    description: >-
+      El generador omitía silenciosamente los paquetes sin dependencias, que
+      pnpm escribe como "'pkg@1.0.0': {}". Se perdían 257 de 709 componentes,
+      el 36 % del árbol. El SBOM de la Fase 3 estaba incompleto.
+    severity: alta
+    status: corregido
+
+limitations:
+  - >-
+    50 componentes del SBOM no declaran licencia: 48 binarios específicos de
+    plataforma y fsevents, ninguno instalado en Windows. Un SBOM generado en
+    macOS o Linux podría diferir.
+  - >-
+    El informe de compatibilidad aplica reglas declaradas por familia de
+    licencia. No evalúa el escenario concreto de distribución ni sustituye
+    asesoría legal.
+  - >-
+    La clasificación de BlueOak-1.0.0, 0BSD, Python-2.0, CC-BY-4.0 y Zlib la
+    realizó esta herramienta, no un abogado. Debe confirmarse.
+  - >-
+    No se implementó ningún módulo sectorial de la Fase 4. Los pasos 3 a 12
+    de la instrucción están pendientes en su totalidad.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.
