@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0005
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: eccb28d
+component: docs/phase4
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Registrar el commit de herramientas de cumplimiento en el registro de
+  procedencia y documentar qué se hizo y qué no en los pasos 1 y 2.
+
+generated_or_modified_scope: >-
+  Creación del registro AIP-2026-0004 y del informe
+  docs/phase4/PHASE-4-STEP-1-2-REPORT.md. El informe declara de forma
+  explícita que no se implementó ningún módulo sectorial y que los pasos 3
+  a 12 de la instrucción siguen pendientes en su totalidad.
+
+files:
+  - docs/compliance/ai-provenance/AIP-2026-0004.yml
+  - docs/phase4/PHASE-4-STEP-1-2-REPORT.md
+
+tests_executed:
+  - name: pnpm license:headers
+    result: pass
+    detail: cobertura SPDX mantenida
+  - name: pnpm provenance:verify
+    result: pass
+    detail: registros estructuralmente válidos
+
+security_review: not_applicable
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+
+limitations:
+  - >-
+    Documentación únicamente; no introduce ni modifica código ejecutable.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.

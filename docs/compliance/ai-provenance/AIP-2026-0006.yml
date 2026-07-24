@@ -1,0 +1,85 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0006
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: pending
+component: docs
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Revisar las funcionalidades del sistema completo y producir un informe en
+  Markdown, estructurado para que un agente de IA lo analice, indicando qué
+  funciona, qué está pendiente, en qué fase se encuentra y qué sugerir para
+  las siguientes fases.
+
+generated_or_modified_scope: >-
+  Creación de docs/SYSTEM-STATE-REPORT.md a partir de inspección directa del
+  repositorio: catálogo de módulos, superficie de API, modelo de datos,
+  permisos, capa web, worker, cumplimiento y deuda técnica. Incluye análisis
+  de brecha contra los 56 criterios de aceptación de la Fase 4 y una
+  propuesta de subdivisión en subfases 4A-4G.
+
+files:
+  - docs/SYSTEM-STATE-REPORT.md
+  - docs/compliance/ai-provenance/AIP-2026-0005.yml
+  - docs/compliance/ai-provenance/AIP-2026-0006.yml
+
+method:
+  - inspección de packages/domain/src/index.ts (registro de 47 módulos)
+  - conteo de tablas en migrations/*.up.sql
+  - extracción de rutas desde decoradores de controladores
+  - conteo de permisos en packages/database/src/seed.ts
+  - lectura de docs/PHASE-3-REPORT.md y docs/PHASE-4-READINESS.md
+  - ejecución real de la suite completa
+
+tests_executed:
+  - name: pnpm lint
+    result: pass
+  - name: pnpm typecheck
+    result: pass
+  - name: pnpm test
+    result: pass
+    detail: 86 pruebas
+  - name: pnpm test:integration
+    result: pass
+    detail: 17 pruebas
+  - name: pnpm test:e2e
+    result: pass
+    detail: 18 pasan, 6 omitidos
+  - name: pnpm test:compliance
+    result: pass
+    detail: 15 pruebas
+  - name: pnpm license:scan
+    result: pass
+    detail: 769 paquetes, 0 en revisión
+  - name: pnpm sbom:generate:project
+    result: pass
+    detail: 709 componentes
+
+security_review: not_applicable
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+
+limitations:
+  - >-
+    El informe clasifica varios módulos como PREPARADO_APAGADO o
+    IMPLEMENTADO_NO_EJERCITADO precisamente porque su operación extremo a
+    extremo NO fue verificada. Solo lo marcado OPERATIVO fue ejecutado.
+  - >-
+    Las estimaciones de esfuerzo de la sección 7.3 son relativas y derivadas
+    de la densidad del código existente. No son estimaciones de calendario.
+  - >-
+    El conteo de ~147 endpoints proviene de decoradores de ruta y puede
+    diferir levemente de la superficie efectiva por rutas parametrizadas.
+  - >-
+    No se ejecutaron pruebas de carga, rendimiento, recuperación ante
+    desastres ni proveedores externos reales.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.
