@@ -1,0 +1,119 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+#
+# Política de procedencia de desarrollo asistido por IA.
+#
+# Es un control INTERNO del proyecto. No es un requisito estatutario ni
+# una afirmación de que alguna norma internacional exija divulgación de IA
+# línea por línea.
+
+format: erp-express-peru-ai-provenance-policy
+version: 1
+effective_from: 2026-07-23
+
+principles:
+  ai_is_not_an_author: true
+  ai_is_not_a_copyright_holder: true
+  statement: >-
+    La asistencia de IA se registra como herramienta de desarrollo utilizada
+    bajo dirección y revisión humana. Ningún sistema de IA puede figurar como
+    autor ni como titular de derechos sobre este software.
+
+  no_per_line_annotation: true
+  no_per_line_rationale: >-
+    Está prohibido anotar cada línea física de código con avisos de
+    titularidad o de IA. Esa práctica reduce la legibilidad, aumenta el
+    tamaño de los archivos, complica el mantenimiento, interfiere con los
+    formateadores, produce avisos repetitivos sin significado y crea una
+    certeza legal falsa. La trazabilidad se logra mediante identificadores
+    SPDX a nivel de archivo, estos registros de procedencia, trailers de
+    commit y evidencia de revisión humana.
+
+# Campos obligatorios en cada registro de procedencia.
+required_fields:
+  - provenance_id
+  - date
+  - repository
+  - branch
+  - commit
+  - component
+  - files
+  - development_tool
+  - human_request_summary
+  - generated_or_modified_scope
+  - human_reviewer
+  - review_date
+  - tests_executed
+  - security_review
+  - license_review
+  - accepted
+  - limitations
+
+optional_fields:
+  - model
+
+# Un cambio asistido por IA NO se considera aceptado hasta cumplir todo esto.
+acceptance_criteria:
+  - una persona revisa la implementación
+  - las pruebas pasan
+  - los cambios relevantes para seguridad son revisados
+  - el licenciamiento es verificado
+  - el registro de procedencia está completo
+  - el revisor acepta explícitamente el resultado
+
+reviewer_integrity:
+  never_record_unverified_reviewer: true
+  rule: >-
+    No se puede registrar a una persona como revisora sin evidencia real de
+    que revisó. Un registro con human_reviewer distinto de 'pending' debe
+    corresponder a una revisión que efectivamente ocurrió. Inventar un
+    revisor invalida todo el control.
+
+# Convención interna de trailers de commit. No es un requisito legal.
+commit_trailers:
+  - key: AI-Assisted-By
+    example: Claude Opus 4.8 (Claude Code)
+  - key: Human-Reviewed-By
+    example: <revisor humano verificado, o 'pending'>
+  - key: Provenance-Record
+    example: AIP-2026-0001
+
+records_directory: docs/compliance/ai-provenance/
+verify_command: pnpm provenance:verify
+
+# Mapeos de gobernanza como referencias configurables.
+# NO son afirmaciones de certificación ni de conformidad evaluada.
+governance_mappings:
+  disclaimer: >-
+    Los marcos listados se usan como referencia de diseño. El proyecto NO
+    afirma estar certificado, evaluado ni conforme con ninguno de ellos.
+    Cualquier afirmación de conformidad requiere evaluación independiente.
+  frameworks:
+    - id: NIST-AI-RMF
+      name: NIST AI Risk Management Framework
+      status: referencia_de_diseño
+      assessed: false
+    - id: NIST-GenAI-Profile
+      name: NIST Generative AI Profile
+      status: referencia_de_diseño
+      assessed: false
+    - id: NIST-SSDF
+      name: NIST Secure Software Development Framework
+      status: referencia_de_diseño
+      assessed: false
+    - id: NIST-SP-800-218A
+      name: NIST SP 800-218A (desarrollo seguro con IA)
+      status: referencia_de_diseño
+      assessed: false
+    - id: EU-AI-ACT
+      name: Controles de transparencia del Reglamento de IA de la Unión Europea
+      status: referencia_de_diseño
+      assessed: false
+      note: aplicabilidad no determinada; requiere evaluación jurídica
+    - id: US-COPYRIGHT-OFFICE
+      name: Guía de la Oficina de Derechos de Autor de EE. UU. sobre obras con material generado por IA
+      status: referencia_de_diseño
+      assessed: false
+      note: >-
+        Se conservan insumos para una eventual solicitud de registro. No se
+        afirma que el registro vaya a concederse.

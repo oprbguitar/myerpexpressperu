@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0002
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: ab1b994c43e723698046b6bf5342c7d52e8f7ce2
+component: compliance/licenciamiento
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Establecer la política de licenciamiento, los archivos de titularidad, la
+  automatización de encabezados SPDX y la política de procedencia de IA
+  antes de escribir código sectorial de Fase 4.
+
+generated_or_modified_scope: >-
+  Creación de LICENSE con el texto canónico de MPL-2.0 descargado de
+  mozilla.org y verificado íntegro. Creación de NOTICE, AUTHORS.md,
+  CONTRIBUTORS.md, docs/legal/OWNERSHIP.yml y docs/legal/OWNERSHIP-REVIEW.md,
+  todos declarando que la titularidad está sin resolver y sin inscribir a
+  ninguna persona. Creación de docs/compliance/LICENSE-MATRIX.yml basada en
+  un escaneo real de los paquetes instalados. Implementación de las
+  herramientas de licenciamiento en scripts/license/. Incorporación de
+  yaml@2.9.0 (ISC) como única dependencia nueva.
+
+files:
+  - LICENSE
+  - NOTICE
+  - AUTHORS.md
+  - CONTRIBUTORS.md
+  - docs/legal/OWNERSHIP.yml
+  - docs/legal/OWNERSHIP-REVIEW.md
+  - docs/compliance/LICENSE-MATRIX.yml
+  - docs/phase4/BASELINE.md
+  - scripts/license/policy.mjs
+  - scripts/license/headers.mjs
+  - package.json
+
+tests_executed:
+  - name: escaneo de licencias de línea base
+    result: pass
+    detail: >-
+      768 paquetes, 11 licencias distintas, 0 desconocidas, 0 prohibidas,
+      ninguna dependencia GPL/AGPL/LGPL/SSPL/BUSL/Elastic
+  - name: verificación de integridad de LICENSE
+    result: pass
+    detail: 16726 bytes, secciones 1-10 y Exhibits A y B presentes
+
+human_reviewer: pending
+review_date: null
+security_review: not_applicable
+license_review: completed_by_tool_pending_human
+accepted: false
+
+limitations:
+  - >-
+    El titular de derechos "ERP Express Perú contributors" es PROVISIONAL.
+    No existe declaración de titularidad aprobada por el propietario. Ver
+    docs/legal/OWNERSHIP-REVIEW.md.
+  - >-
+    La adopción de MPL-2.0 es provisional y está sujeta a aprobación legal
+    final del propietario del proyecto.
+  - >-
+    El informe de compatibilidad de licencias es una ayuda de ingeniería
+    basada en reglas declaradas. No constituye asesoría legal.
+  - >-
+    Cuatro licencias permisivas presentes en el árbol (BlueOak-1.0.0, 0BSD,
+    Python-2.0, CC-BY-4.0) no figuraban en la lista de la instrucción y
+    fueron clasificadas por esta herramienta. Esa clasificación debe ser
+    confirmada por revisión humana.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.

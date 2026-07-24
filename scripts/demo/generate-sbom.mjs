@@ -17,15 +17,30 @@ export async function generateSbom(repositoryRoot, outputFile) {
   const snapshotText = snapshotStart >= 0 ? lock.slice(snapshotStart + 12) : lock;
   const components = new Map();
   for (const line of snapshotText.split(/\r?\n/)) {
-    if (!line.startsWith("  ") || line.startsWith("    ") || !line.trimEnd().endsWith(":")) continue;
-    let key = line.trim().slice(0, -1);
+    if (!line.startsWith("  ") || line.startsWith("    ")) continue;
+    // pnpm escribe los paquetes sin dependencias como "'pkg@1.0.0': {}" y
+    // los que sí tienen como "'pkg@1.0.0':". Ambas formas son componentes.
+    // Aceptar solo la segunda omitía silenciosamente los paquetes hoja.
+    const trimmedEnd = line.trimEnd();
+    let entry;
+    if (trimmedEnd.endsWith(":")) entry = trimmedEnd.trim().slice(0, -1);
+    else if (trimmedEnd.endsWith(": {}")) entry = trimmedEnd.trim().slice(0, -4);
+    else continue;
+    let key = entry;
     if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith("\"") && key.endsWith("\""))) {
       key = key.slice(1, -1);
     }
-    const at = key.lastIndexOf("@");
+    // pnpm anexa las dependencias de pares entre paréntesis, por ejemplo
+    // "@apideck/better-ajv-errors@0.3.7(ajv@8.20.0)". Ese sufijo debe
+    // eliminarse ANTES de buscar el separador de versión: si no, el último
+    // "@" encontrado es el de la dependencia de pares y tanto el nombre
+    // como la versión quedan corruptos.
+    const parenthesis = key.indexOf("(");
+    const bare = parenthesis >= 0 ? key.slice(0, parenthesis) : key;
+    const at = bare.lastIndexOf("@");
     if (at <= 0) continue;
-    const name = key.slice(0, at);
-    const version = key.slice(at + 1).split("(")[0];
+    const name = bare.slice(0, at);
+    const version = bare.slice(at + 1);
     if (!name || !version || version.startsWith("link:") || version.startsWith("workspace:")) continue;
     components.set(`${name}@${version}`, {
       type: "library",

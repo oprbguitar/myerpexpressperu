@@ -54,6 +54,16 @@ allowed:
     attribution_required: true
     added_on: 2026-07-23
     added_because: detectada en el escaneo de línea base de Fase 4
+  - id: Zlib
+    note: >-
+      Permisiva, aprobada por OSI. Entra únicamente como rama de la
+      expresión compuesta "(MIT AND Zlib)" de pako. Se declara de forma
+      explícita: una licencia permitida «implícitamente» por una resolución
+      compuesta no es una decisión registrada, y el escaneo la rechaza.
+    added_on: 2026-07-23
+    added_because: >-
+      el escaneo de línea base marcó pako@1.0.11 para revisión porque Zlib
+      no estaba declarada
 
 # Expresiones SPDX compuestas y cómo resolverlas.
 compound_resolutions:
@@ -63,7 +73,9 @@ compound_resolutions:
   - expression: "(MIT AND Zlib)"
     resolve_to: [MIT, Zlib]
     rationale: conjunción; ambas son permisivas y compatibles
-    note: Zlib queda implícitamente permitida por esta resolución
+    note: >-
+      Ambas ramas deben figurar en 'allowed' por separado. La conjunción
+      exige cumplir las dos licencias a la vez, no elegir una.
 
 review:
   - id: LGPL-2.1

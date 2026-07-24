@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0003
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: bc1737152d1730775d16b1180e71489fcb3c3e7b
+component: compliance/encabezados-spdx
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Aplicar identificadores SPDX a los archivos fuente originales del
+  proyecto, sin anotar cada línea y sin eliminar avisos de terceros.
+
+generated_or_modified_scope: >-
+  Inserción mecánica y no semántica del aviso SPDX-FileCopyrightText y
+  SPDX-License-Identifier al inicio de 216 archivos fuente originales que
+  carecían de él. Cobertura resultante: 220 de 220 archivos. La sintaxis de
+  comentario sigue el tipo de archivo. Ningún archivo contenía aviso de
+  copyright de terceros, por lo que ninguno fue omitido por esa causa y
+  ninguno fue eliminado.
+
+files:
+  - "216 archivos en apps/, packages/, modules/, migrations/, scripts/, tests/, deployment/"
+  - detalle: "ver git show bc17371 --stat"
+
+tests_executed:
+  - name: pnpm lint
+    result: pass
+    detail: --max-warnings=0
+  - name: pnpm typecheck
+    result: pass
+    detail: 7 proyectos, sin errores
+  - name: pnpm test
+    result: pass
+    detail: 18 archivos, 86 pruebas
+  - name: pnpm test:integration
+    result: pass
+    detail: 4 archivos, 17 pruebas
+  - name: pnpm build
+    result: pass
+    detail: api, web, worker, database
+  - name: pnpm test:e2e
+    result: pass
+    detail: 18 pasan, 6 omitidos
+  - name: ida y vuelta de migraciones contra base de datos limpia
+    result: pass
+    detail: >-
+      Base erp_hdrcheck: se aplicaron las 11 migraciones up, luego un reset
+      completo que ejercitó cada down.sql, y se eliminó la base. Esto es lo
+      que realmente demuestra que el SQL editado sigue siendo válido.
+
+human_reviewer: pending
+review_date: null
+security_review: not_applicable
+license_review: completed_by_tool_pending_human
+accepted: false
+
+limitations:
+  - >-
+    Se modificaron archivos de migración ya aplicados. El runner actual no
+    calcula sumas de verificación (schema_migrations solo guarda la versión),
+    por lo que el cambio no puede romper una migración aplicada. Hacerlo
+    ahora, antes de que exista cualquier mecanismo de checksum, es más seguro
+    que hacerlo después. Aun así, es una desviación de la regla de AGENTS.md
+    de no editar migraciones aplicadas, y se registra como tal.
+  - >-
+    El titular inscrito en los 216 encabezados es el marcador PROVISIONAL.
+    Cuando se resuelva la titularidad habrá que ejecutar
+    `pnpm license:headers:apply` tras actualizar OWNERSHIP.yml.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.

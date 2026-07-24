@@ -1,0 +1,97 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+#
+# Responsables por componente. Define quién debe revisar cada área.
+#
+# ESTADO: sin asignar. No se registra a ninguna persona como responsable
+# sin confirmación del propietario del proyecto. Asignar responsables
+# ficticios haría inoperante el control de revisión.
+
+format: erp-express-peru-component-owners
+version: 1
+status: unassigned
+assigned_by: null
+assigned_on: null
+
+# Roles de revisión exigidos por AGENTS.md y por la instrucción de Fase 4.
+review_roles:
+  - id: architecture
+    scope: contratos compartidos, límites de dominio, resolución de conflictos
+  - id: database
+    scope: migraciones, secuenciación, índices, RLS
+  - id: security
+    scope: autenticación, autorización, sesiones, IP, dispositivos, secretos
+  - id: licensing
+    scope: toda dependencia externa nueva, encabezados SPDX, SBOM
+  - id: legal
+    scope: pantallas legales, titularidad, avisos de privacidad
+  - id: documentation
+    scope: correspondencia entre guías y comportamiento real
+  - id: qa
+    scope: efectos entre módulos, pruebas adversariales
+
+components:
+  - path: apps/api
+    role: architecture
+    owner: null
+  - path: apps/web
+    role: architecture
+    owner: null
+  - path: apps/worker
+    role: architecture
+    owner: null
+  - path: packages/domain
+    role: architecture
+    owner: null
+  - path: packages/contracts
+    role: architecture
+    owner: null
+  - path: packages/database
+    role: database
+    owner: null
+  - path: packages/security
+    role: security
+    owner: null
+  - path: migrations
+    role: database
+    owner: null
+  - path: modules/legal-compliance
+    role: legal
+    owner: null
+  - path: modules/artificial-intelligence
+    role: security
+    owner: null
+    note: requiere también revisión legal
+  - path: modules/ocr
+    role: security
+    owner: null
+    note: requiere también revisión legal
+  - path: modules/occupational-safety
+    role: legal
+    owner: null
+  - path: modules/human-resources
+    role: legal
+    owner: null
+    note: contiene datos personales sensibles
+  - path: scripts/license
+    role: licensing
+    owner: null
+  - path: scripts/provenance
+    role: licensing
+    owner: null
+  - path: docs/legal
+    role: legal
+    owner: null
+  - path: docs/compliance
+    role: licensing
+    owner: null
+
+# Reglas que no dependen de que haya responsables asignados.
+independent_review_rules:
+  - no_self_approval_high_risk: >-
+      Ningún agente ni autor puede marcar como finalmente aprobado su propio
+      trabajo de alto riesgo.
+  - security_requires_independent_review: true
+  - database_requires_independent_review: true
+  - licensing_requires_independent_review: true
+  - auditor_cannot_approve_own_corrective_action: true

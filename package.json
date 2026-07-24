@@ -43,6 +43,17 @@
     "demo:health": "node scripts/demo/demo-command.mjs health",
     "demo:reset": "node scripts/demo/demo-command.mjs reset",
     "demo:stop": "node scripts/demo/demo-command.mjs stop",
+    "license:headers": "node scripts/license/headers.mjs",
+    "license:headers:apply": "node scripts/license/headers.mjs --apply",
+    "license:scan": "node scripts/license/scan.mjs",
+    "license:compatibility": "node scripts/license/compatibility.mjs",
+    "license:notices": "node scripts/license/notices.mjs",
+    "provenance:verify": "node scripts/provenance/verify.mjs",
+    "provenance:verify:strict": "node scripts/provenance/verify.mjs --strict",
+    "sbom:generate:project": "node scripts/sbom/generate.mjs",
+    "test:compliance": "node ./node_modules/vitest/vitest.mjs run tests/compliance",
+    "compliance:verify": "pnpm license:headers && pnpm license:scan && pnpm license:compatibility && pnpm provenance:verify && pnpm sbom:generate:project && pnpm test:compliance",
+    "phase4:verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:integration && pnpm build && pnpm compliance:verify",
     "phase3:verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:integration && pnpm build && pnpm security:scan && pnpm check:bundle && pnpm audit --prod && pnpm demo:verify"
   },
   "devDependencies": {

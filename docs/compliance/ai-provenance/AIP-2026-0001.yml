@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0001
+date: 2026-07-23
+repository: erp-express-peru
+branch: master
+commit: 4df34c4f779349a6045c0594b935c048c099f742
+component: infraestructura/configuración
+
+development_tool: Claude Code
+model: claude-opus-4-8
+
+human_request_summary: >-
+  Establecer la línea base de Fase 4 sin modificar código de negocio, y
+  mover los puertos de desarrollo a valores no ocupados en la máquina de
+  destino.
+
+generated_or_modified_scope: >-
+  Cambio de puertos de desarrollo de 3000 a 3100 (API) y de 5173 a 5273
+  (web), tras verificar que ambos destinos estaban libres. Creación de
+  .gitattributes para normalizar finales de línea. Inicialización del
+  repositorio Git con autorización explícita del propietario e importación
+  de las Fases 1-3 como commit inicial.
+
+files:
+  - apps/api/src/config.ts
+  - apps/web/vite.config.ts
+  - apps/web/src/api.ts
+  - .env
+  - .env.example
+  - playwright.config.ts
+  - docker-compose.yml
+  - tests/e2e/shell.spec.ts
+  - tests/e2e/phase3.spec.ts
+  - .gitattributes
+
+tests_executed:
+  - name: pnpm typecheck
+    result: pass
+    detail: 7 proyectos del workspace, sin errores
+  - name: pnpm lint
+    result: pass
+  - name: pnpm test
+    result: pass
+    detail: 18 archivos, 86 pruebas
+  - name: pnpm test:integration
+    result: pass
+    detail: 4 archivos, 17 pruebas contra PostgreSQL real
+  - name: pnpm test:e2e
+    result: pass
+    detail: 18 pasan, 6 omitidos; confirma API en 3100 y web en 5273
+  - name: pnpm build
+    result: pass
+  - name: pnpm audit --prod
+    result: pass
+    detail: sin vulnerabilidades conocidas
+
+human_reviewer: pending
+review_date: null
+security_review: pending
+license_review: not_applicable
+accepted: false
+
+limitations:
+  - >-
+    Los servicios de infraestructura (PostgreSQL 5432, MinIO 9000/9001,
+    Mailpit 1025/8025) no se movieron; solo se cambiaron los puertos de
+    aplicación que estaban en conflicto.
+  - >-
+    El repositorio no tenía historial Git previo, por lo que la autoría de
+    las Fases 1-3 no puede derivarse de commits y debe declararla el
+    propietario.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.
