@@ -2,11 +2,13 @@
 document_type: system_state_report
 project: ERP Express Perú
 generated: 2026-07-23
+updated: 2026-07-23
 generated_by: Claude Opus 4.8 (Claude Code)
 audience: AI agent / technical analyst
 purpose: Recopilatorio completo del estado funcional para análisis y planificación
 verification_basis: inspección directa del código y ejecución real de la suite
 human_reviewed: false
+superseded_health_assessment_by: docs/reviews/EXECUTIVE-TECHNICAL-REVIEW.md
 ---
 
 # ERP Express Perú — Informe completo de estado del sistema
@@ -15,6 +17,27 @@ human_reviewed: false
 > Cada capacidad lleva un estado explícito de la enumeración definida en §0.2.
 > Todo dato numérico proviene de inspección del repositorio o de ejecución real
 > de comandos, no de estimación. Donde algo no está verificado, se dice.
+
+> ## ⚠️ AVISO DE VERIFICACIÓN INDEPENDIENTE (2026-07-23)
+>
+> Después de generar este informe se ejecutó una **verificación técnica
+> independiente** que trató sus conclusiones como hipótesis y las contrastó
+> contra la base de datos y la API en ejecución. Resultado:
+>
+> - **El INVENTARIO de este documento (módulos, tablas, endpoints, permisos)
+>   se confirmó correcto.** Puede seguir usándose como mapa del sistema.
+> - **La EVALUACIÓN DE SALUD de este documento era demasiado optimista y queda
+>   corregida.** En particular, la afirmación «cero defectos en Fases 1–3» y la
+>   «línea base verde» eran ciertas solo bajo las condiciones exactas en que se
+>   ejecutó la suite, y ocultaban cuatro defectos críticos.
+> - **Veredicto de la verificación: `PHASE_4_NOT_READY`.** 5 de 6 puertas de
+>   preparación en FAIL.
+>
+> Los hallazgos críticos, probados por ejecución, están resumidos en §3.6 y
+> desarrollados en [`docs/reviews/EXECUTIVE-TECHNICAL-REVIEW.md`](reviews/EXECUTIVE-TECHNICAL-REVIEW.md)
+> y [`docs/reviews/PHASE-4-READINESS-DECISION.md`](reviews/PHASE-4-READINESS-DECISION.md).
+> **Ante cualquier contradicción entre este documento y los de `docs/reviews/`,
+> prevalecen los de `docs/reviews/`.**
 
 ---
 
@@ -108,7 +131,7 @@ La instrucción de Fase 4 define 12 pasos (§35). Estado real:
 | 5 | Transporte y flota | ❌ Pendiente |
 | 6 | Construcción, contratistas, agroindustria, sector público avanzado | ❌ Pendiente |
 | 7 | Auditoría interna y controles continuos | ❌ Pendiente |
-| 8 | MFA, passkeys, sesiones, IP, gobierno de accesos | ❌ Pendiente |
+| 8 | MFA, passkeys, sesiones, IP, gobierno de accesos | ❌ Pendiente (excepto corrección de proxy de confianza, ya aplicada — §3.6, C-3) |
 | 9 | Autoauditoría, verificador de instalación, deriva de configuración | ❌ Pendiente |
 | 10 | Centro de documentación y generación de manuales | ❌ Pendiente |
 | 11 | Revisiones (licencias, seguridad, privacidad, legal, accesibilidad) | ❌ Pendiente |
@@ -143,13 +166,25 @@ Todo lo de esta sección fue **ejecutado** en esta sesión con resultado exitoso
 | `pnpm demo:verify` | ✅ PASS | 34 archivos escaneados, 0 hallazgos de secretos |
 | Migraciones ida y vuelta | ✅ PASS | 11 `up` + `reset` completo contra base limpia |
 
-**Total: 136 pruebas en verde. Cero defectos en el código de Fases 1–3.**
+**Total: 136 pruebas en verde bajo estas condiciones.**
+
+> **⚠️ Corrección de la verificación independiente.** La frase original decía
+> «Cero defectos en el código de Fases 1–3». **Es incorrecta y queda retirada.**
+> La suite pasa, pero:
+>
+> - `pnpm test:integration` **sale 0 con las 17 pruebas OMITIDAS** cuando falta
+>   `DATABASE_URL`. La «verdura» de arriba depende de que la base esté levantada;
+>   en CI sin esa variable, el comando reporta éxito sin verificar nada. (§3.6, C-4)
+> - 14 de las 17 pruebas de integración solo consultan `information_schema`:
+>   afirman que existe una política RLS, no que actúe. (§3.6, H-2)
+> - La afirmación correcta es: **«No se detectaron defectos en los escenarios
+>   cubiertos por la suite ejecutada»** — que es mucho menos de lo que parecía.
 
 ### 2.2 Núcleo (Fase 1) — `OPERATIVO`
 
 | Capacidad | Evidencia |
 | --- | --- |
-| Multi-tenant con `tenant_id` / `company_id` | 208 tablas, 16 políticas RLS |
+| Multi-tenant con `tenant_id` / `company_id` | 208 tablas. Aislamiento real por **filtrado de aplicación**; las 16 políticas RLS están **inertes** en ejecución (§3.6, C-1) |
 | Autenticación por contraseña (argon2) | `auth.service.ts`, pruebas de seguridad |
 | Sesiones con TTL y revocación | `sessions`, `GET /auth/sessions` |
 | Bloqueo por intentos fallidos | `login_attempts`, `LOGIN_MAX_ATTEMPTS=5` |
@@ -212,7 +247,7 @@ cancelación de venta.
 | Escaneo de licencias | `pnpm license:scan` | 769 paquetes, 0 desconocidas, 0 prohibidas |
 | Compatibilidad | `pnpm license:compatibility` | Sin bloqueantes |
 | Avisos de terceros | `pnpm license:notices` | 769 paquetes, 11 licencias |
-| Procedencia IA | `pnpm provenance:verify` | 5 registros válidos |
+| Procedencia IA | `pnpm provenance:verify` | 7 registros válidos |
 | Puerta de release | `pnpm provenance:verify --strict` | ⛔ Salida 1 — **correcto**, nada aceptado |
 | SBOM del proyecto | `pnpm sbom:generate:project` | 709 componentes, 0 malformados |
 
@@ -268,15 +303,18 @@ Ninguno tiene tablas, contratos, rutas ni entrada en el registro:
 | Historial de inicios de sesión | ⚠️ Parcial (`login_attempts`) | §19.1 ampliado |
 | Reautenticación en operaciones sensibles | ⚠️ Parcial | §18.2 perfiles |
 | Reglas IP / red (allowlist, denylist) | ❌ `NO_EXISTE` | §19.4 |
-| Soporte IPv6 y proxy confiable | ❌ `NO_EXISTE` | §19.4 crítico |
+| Soporte IPv6 y proxy confiable | ⚠️ Corregido a `REQUIRES_CONFIGURATION` (§3.6, C-3) | §19.4 crítico |
 | Indicadores de riesgo de sesión | ❌ `NO_EXISTE` | §19.3 |
 | Revisión periódica de accesos | ❌ `NO_EXISTE` | §20 |
 | Reglas de segregación de funciones | ❌ `NO_EXISTE` | §15.1, §20 |
 | Revocación de sesión de terceros | ⚠️ Solo propias | §18.1 |
 
-**El control de IP con proxy confiable (§19.4) es el punto de mayor riesgo:**
+**El control de IP con proxy confiable (§19.4) era el punto de mayor riesgo:**
 sin validación de `X-Forwarded-For`, cualquier allowlist basada en IP sería
-falsificable.
+falsificable. La verificación independiente **confirmó y corrigió** este riesgo:
+`trustProxy: true` incondicional permitía falsificar la IP y evadir el limitador
+de tasa por completo. Corregido con `TRUSTED_PROXIES` (§3.6, C-3). No se deben
+introducir allowlists por IP hasta cerrar los pendientes de ese hallazgo.
 
 ### 3.4 Limitaciones funcionales heredadas y declaradas
 
@@ -303,8 +341,38 @@ Documentadas en `docs/PHASE-3-REPORT.md` y `docs/PHASE-4-READINESS.md`:
 | WORKER-1 | El worker son 133 líneas: un bucle de outbox. Fase 4 pide colas, reintentos y jobs programados | Media | ❌ Abierto |
 | MOD-1 | `modules/*` solo contiene `AGENTS.md`; el código de Fase 3 vive en `apps/api/src/phase3/`. La convención de ubicación es ambigua para Fase 4 | Media | ❌ Abierto |
 | OWN-1 | Titularidad de derechos sin resolver; MPL-2.0 sin aprobación legal | Alta (legal) | ❌ Abierto |
-| REV-1 | Los 5 registros de procedencia están sin revisión humana | Alta (proceso) | ❌ Abierto |
+| REV-1 | Los 7 registros de procedencia están sin revisión humana | Alta (proceso) | ❌ Abierto |
 | MIG-1 | El runner de migraciones no calcula checksums; Fase 4 §22.4 pide detectar discrepancias | Media | ❌ Abierto |
+| VAL-1 | Errores de validación (`ZodError` en handlers) devuelven HTTP 500 en vez de 400 | Media | ❌ Abierto (hallado en verificación) |
+
+---
+
+## 3.6 Hallazgos críticos de la verificación independiente (2026-07-23)
+
+Estos hallazgos **no estaban en la versión original** de este informe. Fueron
+descubiertos por una revisión independiente que trató este documento como
+hipótesis y contrastó contra la base de datos y la API en ejecución. Cada uno se
+**probó por ejecución**, no por lectura. Desarrollo completo en
+[`docs/reviews/EXECUTIVE-TECHNICAL-REVIEW.md`](reviews/EXECUTIVE-TECHNICAL-REVIEW.md).
+
+| ID | Hallazgo | Severidad | Estado |
+| --- | --- | --- | --- |
+| C-1 | La app conecta a PostgreSQL como **superusuario con `BYPASSRLS`**; las 16 políticas RLS están **inertes**. Lectura cruzada real devolvió 3 filas en vez de 0, incluso con `FORCE`. El aislamiento se sostiene solo por filtrado de aplicación. | **Crítica** | Documentado; requiere decisión humana D-8 |
+| C-2 | **Desactivar un módulo no protege los ~80 endpoints de Fase 1/2**, y `disable-impact` afirma al operador que sí. Probado: con `dashboard` y `cash` deshabilitados, sus endpoints siguen devolviendo 200. `@RequireModule` solo se usa en Fase 3. | **Crítica** | Documentado, no corregido |
+| C-3 | `trustProxy: true` incondicional: **IP falsificable y limitador de tasa evadible** (IP rotada → 150×200, 0×429). Esa IP alimenta auditoría y evidencia legal. | **Crítica** | ✅ **Corregido** (`TRUSTED_PROXIES`), reclasificado a `REQUIRES_CONFIGURATION` |
+| C-4 | **La suite de integración se autodesactiva**: sin `DATABASE_URL`, las 17 pruebas se omiten y el comando **sale 0**. `phase4:verify` lo invoca. No hay CI. | **Crítica** | Documentado, no corregido |
+| H-1 | **La capa de dominio de Fase 3 es código muerto** (869 líneas, 27 funciones sin referencias fuera de sus pruebas). El runtime es CRUD genérico. Sus 25 pruebas verdes no prueban comportamiento del sistema. | Alta | Documentado; requiere decisión humana D-7 |
+| H-2 | **RLS se afirma pero nunca se ejerce**: 14 de 17 pruebas de integración solo consultan `information_schema`. | Alta | Documentado, no corregido |
+| H-3 | **73 archivos de API sin pruebas**, incluidos `auth.guard.ts`, `auth.service.ts`, `storage.service.ts`, `csv.ts`. | Alta | Documentado, no corregido |
+| H-4 | **El worker ignora la activación de módulos**: usa el resultado solo para una línea de log. | Alta | Documentado, no corregido |
+| H-6 | **Sin herramienta de cobertura**: la cobertura no es baja, es inmedible. | Alta | Documentado, no corregido |
+| H-7 | **Sin CI**: no existe `.github/`. Los scripts de verificación son manuales. | Alta | Documentado, no corregido |
+
+**Veredicto de la verificación: `PHASE_4_NOT_READY`** — 5 de 6 puertas en FAIL,
+1 en CONDITIONAL_PASS. Ver
+[`docs/reviews/PHASE-4-READINESS-DECISION.md`](reviews/PHASE-4-READINESS-DECISION.md)
+para la clasificación por puerta y las condiciones obligatorias antes de
+cualquier módulo sectorial.
 
 ---
 
@@ -404,7 +472,8 @@ BSD-2-Clause 9, 0BSD 2, Python-2.0 1, CC-BY-4.0 1, `(MIT AND Zlib)` 1,
 
 ### 5.2 Procedencia de IA — `OPERATIVO` con acción humana pendiente
 
-5 registros (`AIP-2026-0001` a `0005`). **Todos con `human_reviewer: pending` y
+7 registros (`AIP-2026-0001` a `0007`; los dos últimos cubren el informe de
+estado y la verificación independiente). **Todos con `human_reviewer: pending` y
 `accepted: false`.** El verificador rechaza cualquier registro que declare
 `accepted: true` sin revisor verificado.
 
@@ -453,13 +522,17 @@ Detalle en `docs/legal/OWNERSHIP-REVIEW.md`.
 | 27–28. Autoauditoría e instalador | ❌ |
 | 29. Informes sin secretos | ✅ |
 | 30–40. Centro de documentación y guías | ❌ |
-| 41–44. Móvil, overflow, aislamiento | ✅ (heredado de Fase 3) |
-| 45–54. Pruebas, tipos, lint, build | ✅ |
+| 41. Móvil | ✅ (heredado de Fase 3) |
+| 42. Sin overflow horizontal | ✅ (heredado de Fase 3) |
+| 43–44. Aislamiento de tenant/empresa | ⚠️ **Degradado a parcial por la verificación**: funciona por filtrado de aplicación, no por RLS (§3.6, C-1). §37 pide que «pase», y por RLS **no pasa** |
+| 45–54. Pruebas, tipos, lint, build | ⚠️ Pasan, pero la suite de integración se autodesactiva sin base (§3.6, C-4) y la cobertura es inmedible (H-6) |
 | 55. Manifiesto de release | ❌ |
 | 56. Informe final honesto sobre limitaciones | ✅ |
 
-**Cumplidos: 22 de 56 ≈ 39 %.** Los cumplidos son íntegramente los de
-infraestructura, licenciamiento y calidad; ninguno de los funcionales sectoriales.
+**Cumplidos: ~20 de 56 ≈ 36 %** (revisado a la baja tras la verificación: los
+criterios de aislamiento y de pruebas ya no cuentan como plenamente cumplidos).
+Los cumplidos son íntegramente los de infraestructura y licenciamiento; ninguno
+de los funcionales sectoriales.
 
 ---
 
@@ -467,13 +540,30 @@ infraestructura, licenciamiento y calidad; ninguno de los funcionales sectoriale
 
 ### 7.1 Bloqueantes previos a cualquier código nuevo
 
-Estos no son técnicos y **no puede resolverlos una IA**:
+> La verificación independiente convirtió esta lista en **condiciones
+> obligatorias de puerta**. Lista completa y clasificación por puerta en
+> [`docs/reviews/PHASE-4-READINESS-DECISION.md`](reviews/PHASE-4-READINESS-DECISION.md).
+> Resumen:
 
-1. **Resolver la titularidad** (`docs/legal/OWNERSHIP-REVIEW.md`). Cuatro
-   preguntas, cada una con la evidencia requerida especificada.
-2. **Revisar y aceptar o rechazar los 5 registros de procedencia.** Mientras
+**Bloqueantes técnicos (los añade la verificación):**
+
+1. **Crear un rol de aplicación restringido en PostgreSQL** sin `SUPERUSER` ni
+   `BYPASSRLS`, aplicar `FORCE ROW LEVEL SECURITY`, y añadir una prueba de
+   comportamiento que imponga 0 filas en lectura cruzada (C-1 / D-8).
+2. **Aplicar `@RequireModule` a los endpoints de Fase 1/2** o impedir desactivar
+   módulos sin punto de aplicación; corregir el texto de `disable-impact` (C-2).
+3. **Hacer que `test:integration` FALLE sin `DATABASE_URL`** e **introducir CI**
+   (C-4 / H-7). Sin CI, todas las demás correcciones son reversibles en silencio.
+4. **Implementar checksums de migración** (MIG-1).
+5. **Decidir el destino de la capa de dominio muerta de Fase 3**: cablearla o
+   eliminarla (H-1 / D-7).
+
+**Bloqueantes de gobernanza (no puede resolverlos una IA):**
+
+6. **Resolver la titularidad** (`docs/legal/OWNERSHIP-REVIEW.md`).
+7. **Revisar y aceptar o rechazar los 7 registros de procedencia.** Mientras
    sigan pendientes, bajo la política del propio proyecto nada está aceptado.
-3. **Asignar responsables** en `docs/compliance/COMPONENT-OWNERS.yml`. Hoy todos
+8. **Asignar responsables** en `docs/compliance/COMPONENT-OWNERS.yml`. Hoy todos
    son `null`, lo que deja inoperante el control de revisión independiente.
 
 ### 7.2 Secuencia recomendada
@@ -579,38 +669,54 @@ simulada, que es exactamente lo que su §36 prohíbe.
 
 ```yaml
 estado_global:
-  fases_completas: [1, 2, 3]
+  fases_completas: [1, 2, 3]   # inventario completo; salud revisada abajo
   fase_actual: 4
   progreso_fase_4: "2 de 12 pasos (17%)"
-  criterios_aceptacion_fase_4: "22 de 56 (39%)"
-  salud_base: "verde — 136 pruebas, 0 defectos en fases 1-3"
+  criterios_aceptacion_fase_4: "~20 de 56 (36%), revisado a la baja"
+  veredicto_verificacion_independiente: "PHASE_4_NOT_READY"
+  puertas_de_preparacion: "5 de 6 en FALLO, 1 condicional, 0 en PASS"
+  salud_base: >-
+    NO es verde. La suite pasa solo con la base levantada; la de integracion
+    sale 0 con 17 pruebas omitidas si falta DATABASE_URL. La afirmacion previa
+    de '0 defectos' queda retirada: 4 defectos criticos confirmados por ejecucion.
 
-fortalezas:
-  - "núcleo multi-tenant maduro con RLS, auditoría append-only y 199 permisos"
-  - "ciclo comercial completo verificado extremo a extremo"
-  - "47 módulos con activación progresiva y dependencias declaradas"
-  - "infraestructura de licenciamiento y procedencia completa y ejecutable"
-  - "TypeScript estricto sin any, lint sin advertencias"
+hallazgos_criticos_confirmados_por_ejecucion:
+  C-1: "app conecta a postgres como superusuario con BYPASSRLS; las 16 politicas RLS estan inertes; aislamiento solo por filtrado de aplicacion"
+  C-2: "desactivar un modulo no protege ~80 endpoints de fase 1/2, y la API afirma al operador que si"
+  C-3: "trustProxy incondicional permitia falsificar IP y evadir el limitador de tasa — CORREGIDO en esta revision"
+  C-4: "la suite de integracion se autodesactiva y sale 0 sin DATABASE_URL; no hay CI"
+
+fortalezas_confirmadas:
+  - "direccion de dependencias limpia: domain y contracts sin framework"
+  - "controladores delgados; sin reglas de negocio en React"
+  - "dominio puro de fase 1/2 bien probado y correctamente cableado (IGV, transiciones, topes de pago)"
+  - "ambito tenant/empresa derivado de sesion, nunca de entrada del cliente"
+  - "SQL parametrizado; auditoria en la misma transaccion que la mutacion"
+  - "licenciamiento, SPDX, SBOM y procedencia verificados y operativos"
 
 debilidades:
-  - "0 de 19 módulos sectoriales de fase 4 implementados"
-  - "sin MFA, passkeys, reglas IP ni gobierno de accesos"
-  - "worker de 133 lineas insuficiente para colas y jobs programados"
-  - "sin contabilidad completa, lo que limita el costeo de produccion"
-  - "titularidad legal sin resolver, MPL-2.0 sin aprobacion"
-  - "ningun trabajo de fase 4 revisado por humano"
+  - "aislamiento de tenant sin respaldo de base de datos (RLS inerte)"
+  - "limites de modulo no aplicados en fase 1/2 ni en el worker"
+  - "capa de dominio de fase 3 es codigo muerto; sus 25 pruebas no prueban comportamiento"
+  - "73 archivos de API sin pruebas, incluido auth.guard.ts; cobertura inmedible; sin CI"
+  - "0 de 19 modulos sectoriales de fase 4 implementados"
+  - "sin MFA, passkeys, gobierno de accesos; worker insuficiente"
+  - "titularidad legal sin resolver; 7 registros de procedencia sin revision humana"
 
 recomendacion_inmediata:
-  1: "resolver OWNERSHIP-REVIEW.md con asesoria legal"
-  2: "revisar y aceptar o rechazar los 5 registros de procedencia"
-  3: "asignar responsables en COMPONENT-OWNERS.yml"
-  4: "ejecutar fase 4A (contratos sectoriales) antes de cualquier modulo"
-  5: "adelantar fase 4C (identidad) por riesgo de seguridad activo"
+  1: "NO empezar modulos sectoriales; ejecutar subfase 4A de estabilizacion primero"
+  2: "rol de postgres restringido + FORCE RLS + prueba de comportamiento (C-1)"
+  3: "aplicar @RequireModule en fase 1/2 y corregir el texto de disable-impact (C-2)"
+  4: "hacer que test:integration falle sin base + introducir CI (C-4)"
+  5: "resolver bloqueantes de gobernanza: titularidad, procedencia, propietarios"
+
+referencia_autoritativa: "docs/reviews/PHASE-4-READINESS-DECISION.md (prevalece sobre este documento en caso de conflicto)"
 
 advertencia_para_planificacion: >-
-  La fase 4 especificada equivale a entre seis y siete fases reales. Planificarla
-  como unidad unica produce incumplimiento o funcionalidad simulada. Dividir en
-  subfases 4A-4G con criterios de salida verificables por subfase.
+  La fase 4 especificada equivale a entre seis y siete fases reales. Ademas, la
+  base no esta lista: construir 19 modulos sobre RLS inerte, limites no aplicados
+  y una suite que pasa sin ejecutarse multiplicaria los defectos por cada modulo.
+  Estabilizar (4A) antes de cualquier vertical sectorial.
 ```
 
 ---
@@ -623,7 +729,9 @@ advertencia_para_planificacion: >-
 | Comandos ejecutados | lint, typecheck, test, test:integration, test:e2e, test:compliance, build, audit, license:*, provenance:verify, sbom:generate:project, demo:verify, migración ida y vuelta |
 | No verificado | Carga, rendimiento, recuperación ante desastres, despliegue remoto, proveedores externos reales |
 | Revisión humana | **Pendiente** |
-| Registro de procedencia | `AIP-2026-0006` |
+| Registro de procedencia (generación) | `AIP-2026-0006` |
+| **Actualización 2026-07-23** | Incorporados los hallazgos de la verificación independiente (§3.6, avisos en §0, §2.1, §5.2, §6, §7.1, §8). El inventario original se conservó; la evaluación de salud se corrigió. Registro de la verificación: `AIP-2026-0007` |
+| Documentos autoritativos de la verificación | `docs/reviews/EXECUTIVE-TECHNICAL-REVIEW.md`, `docs/reviews/PHASE-4-READINESS-DECISION.md`, `docs/reviews/TENANT-ISOLATION-RESULTS.md`, `docs/reviews/TRUSTED-PROXY-AND-IP-REVIEW.md` |
 
 **Ninguna capacidad se describe como funcional sin haber sido ejecutada.** Las
 marcadas `IMPLEMENTADO_NO_EJERCITADO` o `PREPARADO_APAGADO` se declaran así
