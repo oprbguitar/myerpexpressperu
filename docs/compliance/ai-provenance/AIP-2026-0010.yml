@@ -13,7 +13,8 @@ human_request_summary: >-
   S1: rol restringido erp_app y RLS efectiva
 generated_or_modified_scope: >-
   Separación de roles PostgreSQL; contexto de tenant por petición vía AsyncLocalStorage; FORCE RLS en 189 tablas; guarda de arranque. Aislamiento entre tenants probado por comportamiento a través de erp_app.
-files_summary: "apps/api/src/{request-context,tenant-context.interceptor,database.service,main,config,app.module}.ts, apps/worker/src/main.ts, packages/database/src/{migrate,seed}.ts, migrations/0012-0013, tests/integration/rls-isolation.test.ts"
+files:
+  - "apps/api/src/{request-context,tenant-context.interceptor,database.service,main,config,app.module}.ts, apps/worker/src/main.ts, packages/database/src/{migrate,seed}.ts, migrations/0012-0013, tests/integration/rls-isolation.test.ts"
 tests_executed:
   - name: pnpm phase4:verify
     result: pass

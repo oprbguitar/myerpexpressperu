@@ -13,7 +13,8 @@ human_request_summary: >-
   S3: integración en cerrado y CI
 generated_or_modified_scope: >-
   test:integration falla sin base y prohíbe omitir en CI; workflow de CI con PostgreSQL; cobertura medible (@vitest/coverage-v8). Baseline: domain 79.76%, security 81.46%, api 11.03%.
-files_summary: "scripts/test/run-integration.mjs, .github/workflows/ci.yml, package.json, docs/stabilization/{S3,COVERAGE-BASELINE}.md"
+files:
+  - "scripts/test/run-integration.mjs, .github/workflows/ci.yml, package.json, docs/stabilization/{S3,COVERAGE-BASELINE}.md"
 tests_executed:
   - name: pnpm phase4:verify
     result: pass

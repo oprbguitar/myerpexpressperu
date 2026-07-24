@@ -20,6 +20,14 @@ generated_or_modified_scope: >-
   enforcement en worker por generador, guardas de frontend, disable-impact desde
   registro. Corrección de pantalla en blanco de SUNAT y ErrorBoundary (sesión
   previa incluida en esta rama).
+files:
+  - docs/SYSTEM-STATE-REPORT.md
+  - docs/stabilization/ (S2 + reconciliation + local access + status)
+  - apps/api/src/module-ownership.ts, module-verification.ts, auth.guard.ts, http.ts, main.ts, modules.service.ts, finance.controller.ts
+  - apps/api/src/*.controller.ts (ownership decorators)
+  - apps/worker/src/main.ts
+  - apps/web/src/App.tsx, components/AppShell.tsx, features/shared/modules.tsx
+  - tests: apps/api/src/module-ownership.test.ts, tests/e2e/module-enforcement.spec.ts
 tests_executed:
   - name: pnpm lint / typecheck
     result: pass
