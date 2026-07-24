@@ -8,7 +8,7 @@
 import { useEffect, useState, type PropsWithChildren } from "react";
 import { NavLink, useLocation } from "react-router";
 import { useAuth } from "../auth";
-import { api } from "../api";
+import { useModules } from "../features/shared/modules";
 import { phase3RouteDefinitions } from "../features/phase3/routes";
 import {
   Activity, AuditLog, Building2, ChevronDown, ChevronRight, FileText, Home, Landmark, Menu,
@@ -26,20 +26,20 @@ const navigation = [
     { to: "/precios", label: "Precios", icon: FileText, permission: "pricing.read" },
     { to: "/cotizaciones", label: "Cotizaciones", icon: FileText, permission: "quotations.read" },
     { to: "/pedidos-venta", label: "Pedidos", icon: FileText, permission: "sales-orders.read" },
-    { to: "/ventas", label: "Ventas", icon: Landmark, permission: "sales.read" }
+    { to: "/ventas", label: "Ventas", icon: Landmark, permission: "sales.read", module: "sales" }
   ] },
   { section: "Compras", items: [
     { to: "/proveedores", label: "Proveedores", icon: UsersRound, permission: "parties.read" },
-    { to: "/compras", label: "Compras", icon: Landmark, permission: "purchases.read" },
+    { to: "/compras", label: "Compras", icon: Landmark, permission: "purchases.read", module: "purchases" },
     { to: "/gastos", label: "Gastos", icon: FileText, permission: "expenses.read" }
   ] },
   { section: "Finanzas", items: [
     { to: "/cuentas-por-cobrar", label: "Por cobrar", icon: Landmark, permission: "receivables.read" },
     { to: "/cuentas-por-pagar", label: "Por pagar", icon: Landmark, permission: "payables.read" },
     { to: "/pagos", label: "Pagos y cobros", icon: Landmark, permission: "payments.read" },
-    { to: "/caja", label: "Caja", icon: Landmark, permission: "cash.read" },
-    { to: "/inventario", label: "Inventario", icon: PanelsTopLeft, permission: "inventory.read" },
-    { to: "/sunat", label: "SUNAT básico", icon: FileText, permission: "sunat.read" },
+    { to: "/caja", label: "Caja", icon: Landmark, permission: "cash.read", module: "cash" },
+    { to: "/inventario", label: "Inventario", icon: PanelsTopLeft, permission: "inventory.read", module: "inventory-basic" },
+    { to: "/sunat", label: "SUNAT básico", icon: FileText, permission: "sunat.read", module: "sunat-basic" },
     { to: "/importaciones", label: "Intercambio de datos", icon: Upload, permission: "imports.read" }
   ] },
   { section: "Administración", items: [
@@ -48,7 +48,7 @@ const navigation = [
     { to: "/usuarios", label: "Usuarios", icon: UsersRound, permission: "users.read" },
     { to: "/roles", label: "Roles y permisos", icon: ShieldCheck, permission: "roles.read" },
     { to: "/modulos", label: "Módulos", icon: PanelsTopLeft, permission: "modules.read" },
-    { to: "/documentos", label: "Archivos", icon: FileText, permission: "documents.read" },
+    { to: "/documentos", label: "Archivos", icon: FileText, permission: "documents.read", module: "documents" },
     { to: "/auditoria", label: "Auditoría", icon: AuditLog, permission: "audit.read" }
   ] }
 ];
@@ -56,7 +56,7 @@ const navigation = [
 export function AppShell({ children }: PropsWithChildren) {
   const [open, setOpen] = useState(false);
   const [online, setOnline] = useState(() => window.navigator.onLine);
-  const [enabledModules, setEnabledModules] = useState<ReadonlySet<string>>(new Set());
+  const { enabled: enabledModules } = useModules();
   const { logout, user } = useAuth();
   const location = useLocation();
   useEffect(() => setOpen(false), [location.pathname]);
@@ -69,17 +69,6 @@ export function AppShell({ children }: PropsWithChildren) {
       window.removeEventListener("offline", update);
     };
   }, []);
-  useEffect(() => {
-    let active = true;
-    void api<Array<{ code: string; status: string }>>("/modules")
-      .then((modules) => {
-        if (active) setEnabledModules(new Set(modules.filter((module) => module.status === "enabled").map((module) => module.code)));
-      })
-      .catch(() => {
-        if (active) setEnabledModules(new Set());
-      });
-    return () => { active = false; };
-  }, [user?.userId]);
   return (
     <div className="app-layout">
       <aside className={`sidebar ${open ? "is-open" : ""}`} aria-label="Navegación principal">
@@ -87,7 +76,10 @@ export function AppShell({ children }: PropsWithChildren) {
         <button className="mobile-close" onClick={() => setOpen(false)} aria-label="Cerrar menú"><X /></button>
         <nav>
           {navigation.map((group) => {
-            const items = group.items.filter((item) => user?.permissions.includes(item.permission));
+            const items = group.items.filter((item) =>
+              user?.permissions.includes(item.permission) &&
+              (!("module" in item) || !item.module || enabledModules.has(item.module))
+            );
             return items.length ? <section className="nav-group" key={group.section}>
               <h2>{group.section}</h2>
               {items.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} end={to === "/"}>

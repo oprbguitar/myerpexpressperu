@@ -10,6 +10,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router";
 import { useAuth } from "./auth";
 import { AppShell } from "./components/AppShell";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ModulesProvider, ModuleRoute } from "./features/shared/modules";
 import { LoadingState } from "./components/Ui";
 import { BranchesPage, DocumentsPage, RolesPage, UsersPage } from "./pages/SimplePages";
 import { ChangePasswordPage, ResetRequestPage } from "./pages/PasswordPages";
@@ -49,9 +50,11 @@ function Protected({ children }: { children: React.ReactNode }) {
     return <Navigate to="/cambiar-clave" replace />;
   }
   return (
-    <AppShell>
-      <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>
-    </AppShell>
+    <ModulesProvider>
+      <AppShell>
+        <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>
+      </AppShell>
+    </ModulesProvider>
   );
 }
 
@@ -69,15 +72,15 @@ export default function App() {
         <Route path="/precios" element={<Protected><PricingPage /></Protected>} />
         <Route path="/cotizaciones" element={<Protected><QuotationsPage /></Protected>} />
         <Route path="/pedidos-venta" element={<Protected><SalesOrdersPage /></Protected>} />
-        <Route path="/ventas" element={<Protected><SalesPage /></Protected>} />
-        <Route path="/compras" element={<Protected><PurchasesPage /></Protected>} />
+        <Route path="/ventas" element={<Protected><ModuleRoute module="sales"><SalesPage /></ModuleRoute></Protected>} />
+        <Route path="/compras" element={<Protected><ModuleRoute module="purchases"><PurchasesPage /></ModuleRoute></Protected>} />
         <Route path="/gastos" element={<Protected><ExpensesPage /></Protected>} />
         <Route path="/cuentas-por-cobrar" element={<Protected><AccountsPage kind="receivables" /></Protected>} />
         <Route path="/cuentas-por-pagar" element={<Protected><AccountsPage kind="payables" /></Protected>} />
         <Route path="/pagos" element={<Protected><PaymentsPage /></Protected>} />
-        <Route path="/caja" element={<Protected><CashPage /></Protected>} />
-        <Route path="/inventario" element={<Protected><InventoryPage /></Protected>} />
-        <Route path="/sunat" element={<Protected><SunatPage /></Protected>} />
+        <Route path="/caja" element={<Protected><ModuleRoute module="cash"><CashPage /></ModuleRoute></Protected>} />
+        <Route path="/inventario" element={<Protected><ModuleRoute module="inventory-basic"><InventoryPage /></ModuleRoute></Protected>} />
+        <Route path="/sunat" element={<Protected><ModuleRoute module="sunat-basic"><SunatPage /></ModuleRoute></Protected>} />
         <Route path="/importaciones" element={<Protected><DataExchangePage /></Protected>} />
         <Route path="/notificaciones" element={<Protected><NotificationsPage /></Protected>} />
         <Route path="/organizacion" element={<Protected><CompanyPage /></Protected>} />
