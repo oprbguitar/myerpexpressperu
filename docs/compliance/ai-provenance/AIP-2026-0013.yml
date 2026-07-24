@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0013
+date: 2026-07-24
+repository: erp-express-peru
+branch: stabilization/report-access-s2
+commit: pending
+component: stabilization/S2 + report reconciliation + local access
+development_tool: Claude Code
+model: claude-opus-4-8
+human_request_summary: >-
+  Reconciliar SYSTEM-STATE-REPORT.md, completar y verificar la guía de acceso
+  local, y ejecutar S2 (enforcement de módulos en runtime). Cierra C-2 y H-4.
+generated_or_modified_scope: >-
+  Reconstrucción canónica del informe de estado (17 secciones, contradicciones
+  resueltas). Verificación de acceso local por comportamiento (URLs, admin,
+  no-admin, usuario deshabilitado). S2: decoradores de propiedad de módulo,
+  guard que emite MODULE_DISABLED 409, verificación fail-closed en arranque y CI,
+  enforcement en worker por generador, guardas de frontend, disable-impact desde
+  registro. Corrección de pantalla en blanco de SUNAT y ErrorBoundary (sesión
+  previa incluida en esta rama).
+tests_executed:
+  - name: pnpm lint / typecheck
+    result: pass
+  - name: pnpm test (unit)
+    result: pass
+    detail: 90 pruebas (api 16 incluye ownership fail-closed)
+  - name: pnpm test:integration
+    result: pass
+    detail: 22 pruebas
+  - name: pnpm test:e2e
+    result: pass
+    detail: 20 pasadas, 10 omitidas; incluye enforcement de módulos
+  - name: prueba de comportamiento de enforcement (API real)
+    result: pass
+    detail: cash deshabilitado -> 409 MODULE_DISABLED; payments/core 200
+  - name: ciclo de worker con filtro de módulo
+    result: pass
+security_review: >-
+  Realizada por esta sesión; requiere confirmación humana independiente.
+license_review: not_applicable
+human_reviewer: pending
+review_date: null
+accepted: false
+limitations:
+  - >-
+    El enforcement de frontend se verificó por implementación; el control de
+    seguridad real (servidor) sí está probado por e2e.
+  - >-
+    disable-impact reporta apiControllers a granularidad de clase; los
+    controladores multi-módulo se aplican por método.
+  - >-
+    Sin caché de estado de módulo; el guard consulta por petición (fail-closed).
+  - >-
+    CI sigue sin ejecutarse en remoto; validez al primer push.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.

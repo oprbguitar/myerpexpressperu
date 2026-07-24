@@ -10,14 +10,19 @@
 PHASE_4_NOT_READY
 ```
 
-> **Actualización 2026-07-24 (estabilización S0/S1/S3).** El veredicto se mantiene,
-> pero varias condiciones han avanzado. Gate B pasó de FAIL a CONDITIONAL_PASS
-> (rol restringido + FORCE RLS + prueba de comportamiento implementados; faltan
-> checksums de migración, S5). Gate E pasó de FAIL a CONDITIONAL_PASS (integración
-> en cerrado + CI + cobertura medible; faltan pruebas HTTP de la superficie y e2e
-> en CI). Gates A, C, D y F sin cambios. Detalle por etapa en
-> `docs/stabilization/`. El veredicto global no cambia hasta que **todas** las
-> puertas técnicas obligatorias pasen.
+> **Actualización 2026-07-24 (estabilización S0/S1/S2/S3).** El veredicto se
+> mantiene, pero varias condiciones han avanzado:
+> - Gate A (Arquitectura): FAIL → **CONDITIONAL_PASS** — C-2 cerrado por S2
+>   (enforcement de módulos en API/worker/frontend, fail-closed); queda H-1
+>   (dominio muerto, decisión D-7) y unificación de estructura (S8).
+> - Gate B (Base de datos): FAIL → **CONDITIONAL_PASS** — RLS efectiva (S1);
+>   faltan checksums de migración (S5).
+> - Gate E (Calidad): FAIL → **CONDITIONAL_PASS** — integración en cerrado + CI
+>   + cobertura medible (S3); faltan pruebas HTTP de la superficie y e2e en CI.
+> - Gates C (Seguridad), D (Fiabilidad) y F (Gobernanza) sin cambios.
+>
+> El veredicto global **`PHASE_4_NOT_READY`** no cambia hasta que **todas** las
+> puertas técnicas obligatorias pasen. Detalle por etapa en `docs/stabilization/`.
 
 ## Clasificación de puertas (§20)
 

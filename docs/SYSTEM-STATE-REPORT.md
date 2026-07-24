@@ -85,11 +85,11 @@ NOT_APPLICABLE
 | Endpoints HTTP | ~147 | decoradores |
 | Controladores NestJS | 25 | `find` |
 | Páginas React | 23 | `find` |
-| Pruebas pasadas / omitidas / falladas | **141 / 6 / 0** | ejecución real |
-| — unitarias | 86 | domain 41, security 17, api 12, web 9, database 7 |
+| Pruebas pasadas / omitidas / falladas | **147 / 10 / 0** | ejecución real (tras S2) |
+| — unitarias | 90 | domain 41, security 17, api 16, web 9, database 7 |
 | — integración | 22 | incluye 5 de aislamiento RLS |
 | — compliance | 15 | |
-| — e2e | 18 (+6 omitidas por proyecto) | |
+| — e2e | 20 (+10 omitidas por proyecto) | incluye 2 de enforcement de módulos |
 | Cobertura (domain/security/api) | 79.8% / 81.5% / 11.0% | `@vitest/coverage-v8` |
 | Trabajos de CI | 5 (configurados, no ejecutados en remoto) | `ci.yml` |
 | Componentes SBOM | 742 | `sbom:generate:project` |
@@ -103,7 +103,7 @@ Diferencias respecto a valores previos: ver `REPORT-RECONCILIATION.md`.
 | --- | --- | --- |
 | S0 | Línea base + acceso local | ✅ Completa |
 | S1 | Roles PostgreSQL + RLS efectiva | ✅ Completa y verificada |
-| S2 | Enforcement de módulos en runtime | 🔄 En curso (esta ejecución) |
+| S2 | Enforcement de módulos en runtime | ✅ Completa y verificada |
 | S3 | Integración en cerrado + CI + cobertura | ✅ Completa |
 | S4 | Normalización de errores de API | ⬜ Pendiente |
 | S5 | Checksums de migración | ⬜ Pendiente |
@@ -139,8 +139,6 @@ Ejecutadas extremo a extremo en esta sesión o en S1 (con `erp_app` y RLS activa
 
 | ID | Hallazgo | Severidad | Estado |
 | --- | --- | --- | --- |
-| C-2 | Desactivar un módulo no protege ~80 endpoints de Fase 1/2; `disable-impact` afirma lo contrario. | Crítica | `OPEN` → objetivo de S2 (esta ejecución) |
-| H-4 | El worker ignora la activación de módulos. | Alta | `OPEN` → objetivo de S2 |
 | H-1 | Capa de dominio de Fase 3 es código muerto (869 líneas). | Alta | `BLOCKED_HUMAN_DECISION` (D-7, S6) |
 | H-3 | Superficie de API sin pruebas (`apps/api` 11% cobertura). | Alta | `OPEN` (pruebas HTTP pendientes) |
 | VAL-1 | Errores de validación devuelven 500 en vez de 400. | Media | `OPEN` (S4) |
@@ -157,6 +155,8 @@ Ejecutadas extremo a extremo en esta sesión o en S1 (con `erp_app` y RLS activa
 | H-2 | Prueba de comportamiento de RLS a través de `erp_app`. | `rls-isolation.test.ts` (5) |
 | H-6 | Cobertura medible (`@vitest/coverage-v8`). | `COVERAGE-BASELINE.md` |
 | H-7 | CI configurada (`ci.yml`, 5 trabajos). | validez remota pendiente del primer push |
+| C-2 | Enforcement de módulos en API (guard + fail-closed). | cash deshabilitado → 409 MODULE_DISABLED; `S2-MODULE-ENFORCEMENT.md` |
+| H-4 | Worker respeta activación de módulos. | filtro EXISTS por generador; ciclo verificado |
 | SUNAT | Deriva de contrato corregida + ErrorBoundary. | render verificado en navegador |
 
 ## 8. Base de datos y aislamiento
@@ -198,8 +198,12 @@ Nunca en este informe.
 
 ## 11. Enforcement de módulos
 
-Estado: ver §6 (C-2/H-4) y `S2-MODULE-ENFORCEMENT.md`. Al momento de la
-reconstrucción, S2 está en curso.
+**S2 completa (`FIXED_VERIFIED`).** El guard global emite `MODULE_DISABLED` (409)
+para cualquier endpoint de un módulo deshabilitado; verificación fail-closed en
+arranque y CI; worker filtra por módulo; frontend oculta nav y bloquea rutas;
+`disable-impact` computado del registro. Probado: cash deshabilitado → 409, otros
+módulos del mismo controlador y core siguen 200. Detalle en
+`S2-MODULE-ENFORCEMENT.md`, `S2-MODULE-OWNERSHIP-MATRIX.md`, `S2-MODULE-TEST-MATRIX.md`.
 
 ## 12. Alcance de Fase 4
 
@@ -218,7 +222,7 @@ alcance del rol de BD (D-8, ya ejecutado en S1).
 
 | Puerta | Estado | Nota |
 | --- | --- | --- |
-| Arquitectura | FAIL | C-2 abierto (S2 en curso), H-1 |
+| Arquitectura | CONDITIONAL_PASS | C-2 cerrado (S2); queda H-1 (dominio muerto, decisión D-7) y unificación de estructura (S8) |
 | Base de datos | CONDITIONAL_PASS | RLS efectiva (S1); faltan checksums (S5) |
 | Seguridad | FAIL | proxy corregido; falta MFA, revocación admin, IDOR |
 | Fiabilidad | FAIL | worker sin modelo de reintentos; sin staging/respaldo |
@@ -229,8 +233,9 @@ alcance del rol de BD (D-8, ya ejecutado en S1).
 
 ## 15. Siguiente acción recomendada
 
-Terminar **S2** (enforcement de módulos, cierra C-2/H-4), luego **S4** (errores),
-**S5** (checksums). No iniciar módulos sectoriales.
+S2 completa. Siguiente: **S4** (normalización de errores de API, cierra VAL-1),
+luego **S5** (checksums de migración, MIG-1) y **S6** (decisión D-7 sobre el
+dominio muerto). No iniciar módulos sectoriales.
 
 ## 16. Cambios históricos de evaluación
 
