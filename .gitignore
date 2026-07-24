@@ -11,3 +11,7 @@ output/
 data/
 *.log
 .DS_Store
+
+# Credenciales locales de desarrollo — nunca versionar.
+*.local.md
+LOCAL-ACCESS-CREDENTIALS.local.md
