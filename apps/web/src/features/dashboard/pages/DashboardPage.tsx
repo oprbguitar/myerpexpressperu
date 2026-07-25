@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { api } from "../../../api";
 import { LoadingState, PageHeader } from "../../../components/Ui";
+import { BarChart, ComparisonBars, DonutChart, ProgressBar, TrendChart } from "../../../components/Charts";
 import { dateLabel, money, StatusBadge } from "../../shared/OperationalUi";
 
 interface Dashboard {
@@ -24,7 +25,15 @@ interface Dashboard {
   lowStock: Array<{ itemId: string; code: string; name: string; warehouse: string; quantity: string; minimumStock: string }>;
   recentSales: Array<{ id: string; number?: string; date: string; total: string; status: string; party: string }>;
   recentExpenses: Array<{ id: string; date: string; description: string; total: string; status: string }>;
+  salesTrend: Array<{ month: string; total: string }>;
 }
+
+const MONTHS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic"];
+const monthLabel = (iso: string): string => {
+  const month = Number(iso.slice(5, 7)) - 1;
+  return MONTHS[month] ?? iso;
+};
+const soles = (value: number): string => money(String(value));
 
 const cards = [
   { key: "salesThisMonth", label: "Ventas del mes", to: "/ventas" },
@@ -49,21 +58,51 @@ export default function DashboardPage() {
     <section className="metric-rail" aria-label="Indicadores principales">
       {cards.map((card) => <article key={card.key} className="metric-card">
         <span>{card.label}</span><strong>{money(data.metrics[card.key])}</strong>
-        {card.key === "salesThisMonth" ? <small>
+        {card.key === "salesThisMonth" ? <small className={
+          data.metrics.salesComparisonPercent === null ? "" :
+          Number(data.metrics.salesComparisonPercent) >= 0 ? "trend-up" : "trend-down"
+        }>
           {data.metrics.salesComparisonPercent === null
             ? "Sin base comparable"
-            : `${Number(data.metrics.salesComparisonPercent) >= 0 ? "↑" : "↓"} ${data.metrics.salesComparisonPercent}% vs. mes anterior`}
+            : `${Number(data.metrics.salesComparisonPercent) >= 0 ? "▲" : "▼"} ${data.metrics.salesComparisonPercent}% vs. mes anterior`}
         </small> : null}
         <Link to={card.to}>Ver detalle</Link>
       </article>)}
     </section>
     <div className="dashboard-grid">
+      <section className="dashboard-panel dashboard-wide">
+        <div className="panel-title"><h2>Tendencia de ventas</h2><span className="panel-caption">Últimos 6 meses</span></div>
+        {data.salesTrend.some((point) => Number(point.total) > 0)
+          ? <TrendChart points={data.salesTrend.map((point) => ({ label: monthLabel(point.month), value: point.total }))} />
+          : <p className="panel-empty">Aún no hay ventas suficientes para trazar una tendencia real.</p>}
+      </section>
+      <section className="dashboard-panel">
+        <div className="panel-title"><h2>Posición financiera</h2><Link to="/pagos">Ver pagos</Link></div>
+        <DonutChart
+          centerLabel="Saldo de caja"
+          centerValue={soles(Number(data.metrics.cashBalance))}
+          segments={[
+            { label: "Por cobrar", value: data.metrics.receivablesOutstanding, color: "var(--emerald-600)" },
+            { label: "Por pagar", value: data.metrics.payablesOutstanding, color: "var(--amber-700)" },
+            { label: "Caja", value: data.metrics.cashBalance, color: "var(--blue-600)" }
+          ]}
+        />
+      </section>
       <section className="dashboard-panel dashboard-primary">
         <div className="panel-title"><h2>Productos más vendidos</h2><Link to="/ventas">Ver ventas</Link></div>
-        {data.topItems.length ? <ol className="ranked-list">{data.topItems.map((item) => <li key={item.itemId}>
-          <span><strong>{item.name}</strong><small>{item.quantity} unidades</small></span>
-          <b>{money(item.total)}</b>
-        </li>)}</ol> : <p className="panel-empty">Aún no existen ventas suficientes para mostrar una tendencia real.</p>}
+        {data.topItems.length
+          ? <BarChart bars={data.topItems.map((item) => ({
+              label: item.name, value: item.total, hint: money(item.total)
+            }))} />
+          : <p className="panel-empty">Aún no existen ventas suficientes para mostrar una tendencia real.</p>}
+      </section>
+      <section className="dashboard-panel">
+        <div className="panel-title"><h2>Ventas: mes actual vs anterior</h2></div>
+        <ComparisonBars
+          a={{ label: "Este mes", value: data.metrics.salesThisMonth }}
+          b={{ label: "Mes anterior", value: data.metrics.salesPreviousMonth }}
+          format={(value) => soles(value)}
+        />
       </section>
       <section className="dashboard-panel">
         <div className="panel-title"><h2>Alertas financieras</h2><Link to="/cuentas-por-cobrar">Revisar</Link></div>
@@ -83,8 +122,10 @@ export default function DashboardPage() {
       </section>
       <section className="dashboard-panel dashboard-wide">
         <div className="panel-title"><h2>Productos con stock bajo</h2><Link to="/inventario">Ver inventario</Link></div>
-        {data.lowStock.length ? <div className="compact-rows">{data.lowStock.map((item) => <div key={`${item.itemId}:${item.warehouse}`}>
-          <span><strong>{item.name}</strong><small>{item.warehouse} · {item.code}</small></span>
+        {data.lowStock.length ? <div className="compact-rows stock-rows">{data.lowStock.map((item) => <div key={`${item.itemId}:${item.warehouse}`}>
+          <span className="stock-name"><strong>{item.name}</strong><small>{item.warehouse} · {item.code}</small></span>
+          <ProgressBar value={Number(item.quantity)} max={Number(item.minimumStock)}
+            tone={Number(item.quantity) === 0 ? "danger" : "amber"} />
           <b>{item.quantity} / mín. {item.minimumStock}</b>
         </div>)}</div> : <p className="panel-empty">No existen productos por debajo del mínimo.</p>}
       </section>

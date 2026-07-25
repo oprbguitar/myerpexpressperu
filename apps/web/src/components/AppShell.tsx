@@ -56,7 +56,7 @@ const navigation = [
 export function AppShell({ children }: PropsWithChildren) {
   const [open, setOpen] = useState(false);
   const [online, setOnline] = useState(() => window.navigator.onLine);
-  const { enabled: enabledModules } = useModules();
+  const { enabled: enabledModules, loaded: modulesLoaded } = useModules();
   const { logout, user } = useAuth();
   const location = useLocation();
   useEffect(() => setOpen(false), [location.pathname]);
@@ -78,7 +78,9 @@ export function AppShell({ children }: PropsWithChildren) {
           {navigation.map((group) => {
             const items = group.items.filter((item) =>
               user?.permissions.includes(item.permission) &&
-              (!("module" in item) || !item.module || enabledModules.has(item.module))
+              // Se muestra mientras los módulos aún cargan; solo se oculta cuando
+              // ya cargaron y el módulo está deshabilitado (coherente con ModuleRoute).
+              (!("module" in item) || !item.module || !modulesLoaded || enabledModules.has(item.module))
             );
             return items.length ? <section className="nav-group" key={group.section}>
               <h2>{group.section}</h2>

@@ -38,7 +38,9 @@ test("dashboard operativo usa datos del servidor y navega a ventas", async ({ pa
     await page.getByRole("button", { name: "Abrir menú" }).click();
   }
   await page.getByRole("link", { name: "Ventas", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Ventas" })).toBeVisible();
+  // Exacto: el dashboard tiene titulares que contienen "Ventas" (tendencia,
+  // comparativo); aquí se verifica el titular de la página de Ventas.
+  await expect(page.getByRole("heading", { name: "Ventas", exact: true })).toBeVisible();
 });
 
 test("flujo móvil no desborda y abre una venta rápida", async ({ page }, testInfo) => {

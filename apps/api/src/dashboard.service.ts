@@ -24,7 +24,8 @@ export class DashboardService {
       lowStock,
       documents,
       recentSales,
-      recentExpenses
+      recentExpenses,
+      salesTrend
     ] = await Promise.all([
       this.database.query<{
         current: string; previous: string; comparison_percent: string | null;
@@ -96,6 +97,18 @@ export class DashboardService {
         `select e.id,e.expense_date as date,e.description,e.total::text,e.status
          from expenses e where e.tenant_id=$1 and e.company_id=$2 order by e.expense_date desc,e.id desc limit 5`,
         scope
+      ),
+      this.database.query<{ month: string; total: string }>(
+        `select to_char(m.bucket,'YYYY-MM') as "month",
+           coalesce(sum(s.total) filter(where s.status<>'CANCELLED'),0)::text as total
+         from generate_series(
+           date_trunc('month',current_date)-interval '5 months',
+           date_trunc('month',current_date), interval '1 month'
+         ) as m(bucket)
+         left join sales s on s.tenant_id=$1 and s.company_id=$2
+           and s.sale_date>=m.bucket and s.sale_date<m.bucket+interval '1 month'
+         group by m.bucket order by m.bucket`,
+        scope
       )
     ]);
     return {
@@ -114,7 +127,7 @@ export class DashboardService {
         pendingDocuments: documents[0]?.pending ?? 0,
         rejectedDocuments: documents[0]?.rejected ?? 0
       },
-      topItems, lowStock, recentSales, recentExpenses
+      topItems, lowStock, recentSales, recentExpenses, salesTrend
     };
   }
 }
