@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2026 ERP Express Perú contributors
+# SPDX-License-Identifier: MPL-2.0
+
+provenance_id: AIP-2026-0014
+date: 2026-07-24
+repository: erp-express-peru
+branch: stabilization/report-access-s2
+commit: 0510eda
+component: web/dashboard-visualization
+development_tool: Claude Code
+model: claude-opus-4-8
+human_request_summary: >-
+  Mejorar la visualización del frontend con una vista gráfica (charts).
+generated_or_modified_scope: >-
+  Componentes de gráficos SVG sin dependencias (tendencia, barras, dona,
+  comparativo, progreso); dashboard reconstruido con vista gráfica; tendencia
+  de ventas de 6 meses añadida al backend. Correcciones: navegación muestra
+  ítems de módulo mientras cargan; aserción e2e del titular de Ventas exacta.
+files:
+  - apps/web/src/components/Charts.tsx
+  - apps/web/src/features/dashboard/pages/DashboardPage.tsx
+  - apps/web/src/styles.css
+  - apps/web/src/components/AppShell.tsx
+  - apps/api/src/dashboard.service.ts
+  - tests/e2e/shell.spec.ts
+tests_executed:
+  - name: pnpm phase4:verify
+    result: pass
+    detail: lint, typecheck, 90 unit, 22 integración, build, compliance (exit 0)
+  - name: pnpm test:e2e
+    result: pass
+    detail: 20 pasadas, 10 omitidas
+  - name: verificación en navegador (escritorio 1280 y móvil 375)
+    result: pass
+    detail: gráficos renderizan, sin errores de consola, sin desborde horizontal
+security_review: not_applicable
+license_review: >-
+  Sin dependencias nuevas; gráficos en SVG propio.
+human_reviewer: pending
+review_date: null
+accepted: false
+limitations:
+  - >-
+    La serie de tendencia usa datos reales; con poca data muestra estado vacío.
+  - >-
+    Sin revisión humana. Este registro no está aceptado.
