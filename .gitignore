@@ -10,6 +10,7 @@ dev-dist/
 output/
 data/
 *.log
+*.tsbuildinfo
 .DS_Store
 
 # Credenciales locales de desarrollo — nunca versionar.
