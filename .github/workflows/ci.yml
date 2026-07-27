@@ -39,6 +39,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
       - run: pnpm install --frozen-lockfile
+      - run: pnpm build:packages
       - run: pnpm test
 
   compliance:
@@ -104,6 +105,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "${{ env.NODE_VERSION }}", cache: pnpm }
       - run: pnpm install --frozen-lockfile
+      - run: pnpm build:packages
       # Migraciones y semilla con el rol de migración; crean también erp_app.
       - run: pnpm db:migrate
       - run: pnpm db:seed

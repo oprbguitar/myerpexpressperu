@@ -17,6 +17,7 @@
   "scripts": {
     "bootstrap": "pnpm install && pnpm docker:up && pnpm db:migrate && pnpm db:seed",
     "dev": "pnpm --parallel --filter @erp/api --filter @erp/web --filter @erp/worker dev",
+    "build:packages": "pnpm --filter @erp/domain build && pnpm --filter @erp/contracts build && pnpm --filter @erp/security build && pnpm --filter @erp/database build",
     "build": "pnpm -r build",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "pnpm -r typecheck",
