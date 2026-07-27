@@ -13,8 +13,8 @@ No necesita Node.js ni pnpm para ejecutar el ZIP.
 ## Windows PowerShell
 
 ```powershell
-Expand-Archive .\erp-express-peru-demo-v0.3.0.zip
-Set-Location .\erp-express-peru-demo-portable-v0.3.0
+Expand-Archive .\erp-express-peru-demo-v0.4.0.zip
+Set-Location .\erp-express-peru-demo-portable-v0.4.0
 .\demo-start.ps1
 .\demo-status.ps1
 ```
@@ -33,8 +33,8 @@ Reset y detención:
 ## Linux o macOS
 
 ```bash
-unzip erp-express-peru-demo-v0.3.0.zip
-cd erp-express-peru-demo-portable-v0.3.0
+unzip erp-express-peru-demo-v0.4.0.zip
+cd erp-express-peru-demo-portable-v0.4.0
 chmod +x demo-*.sh
 ./demo-start.sh
 ./demo-status.sh
@@ -90,4 +90,3 @@ la evaluación local completa.
 - IA externa permanece deshabilitada.
 - Los límites configurados son 25 usuarios, 10 000 registros y archivos de 5 MiB.
 - La verificación del paquete no equivale a una certificación productiva.
-

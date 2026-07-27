@@ -6,9 +6,7 @@
  * docs/compliance/ai-provenance/
  */
 import { createHash } from "node:crypto";
-import {
-  chmod, cp, mkdir, readFile, readdir, rm, stat, writeFile
-} from "node:fs/promises";
+import { chmod, cp, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkDemoSecrets } from "./check-secrets.mjs";
@@ -17,7 +15,7 @@ import { generateLicenseInventory } from "./generate-licenses.mjs";
 import { generateSbom } from "./generate-sbom.mjs";
 import { verifyDemoConfiguration } from "./verify-config.mjs";
 
-const version = "0.3.0";
+const version = "0.4.0";
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = resolve(scriptDirectory, "../..");
 const outputRoot = resolve(repositoryRoot, "dist/demo");
@@ -34,23 +32,31 @@ function assertInsideOutput(path) {
 
 function includeSource(source) {
   const name = basename(source);
-  return !["node_modules", "dist", "dev-dist", "test-results", ".env", ".env.demo", ".git"].includes(name)
-    && !name.endsWith(".tsbuildinfo");
+  return (
+    !["node_modules", "dist", "dev-dist", "test-results", ".env", ".env.demo", ".git"].includes(
+      name
+    ) && !name.endsWith(".tsbuildinfo")
+  );
 }
 
 async function copySource(relativePath) {
   const source = resolve(repositoryRoot, relativePath);
   const destination = resolve(packageDirectory, relativePath);
   await mkdir(dirname(destination), { recursive: true });
-  await cp(source, destination, { recursive: true, filter: includeSource, preserveTimestamps: false });
+  await cp(source, destination, {
+    recursive: true,
+    filter: includeSource,
+    preserveTimestamps: false
+  });
 }
 
 async function listFiles(root, cursor = root) {
   const files = [];
   for (const entry of await readdir(cursor, { withFileTypes: true })) {
     const absolute = join(cursor, entry.name);
-    if (entry.isDirectory()) files.push(...await listFiles(root, absolute));
-    else if (entry.isFile()) files.push({ absolute, relative: relative(root, absolute).replaceAll("\\", "/") });
+    if (entry.isDirectory()) files.push(...(await listFiles(root, absolute)));
+    else if (entry.isFile())
+      files.push({ absolute, relative: relative(root, absolute).replaceAll("\\", "/") });
   }
   return files;
 }
@@ -100,7 +106,9 @@ function centralHeader(name, data, checksum, offset, executable) {
 }
 
 async function createZip(sourceDirectory, destination) {
-  const files = (await listFiles(sourceDirectory)).sort((left, right) => left.relative.localeCompare(right.relative));
+  const files = (await listFiles(sourceDirectory)).sort((left, right) =>
+    left.relative.localeCompare(right.relative)
+  );
   const localParts = [];
   const centralParts = [];
   let offset = 0;
@@ -129,7 +137,9 @@ async function writeChecksums() {
     .sort((left, right) => left.relative.localeCompare(right.relative));
   const lines = [];
   for (const file of files) {
-    const digest = createHash("sha256").update(await readFile(file.absolute)).digest("hex");
+    const digest = createHash("sha256")
+      .update(await readFile(file.absolute))
+      .digest("hex");
     lines.push(`${digest}  ${file.relative}`);
   }
   await writeFile(resolve(packageDirectory, "checksums.sha256"), `${lines.join("\n")}\n`, "utf8");
@@ -147,9 +157,21 @@ async function main() {
   await mkdir(packageDirectory, { recursive: true });
 
   for (const file of [
-    "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "tsconfig.base.json", ".dockerignore"
-  ]) await copySource(file);
-  for (const directory of ["apps/api", "apps/web", "apps/worker", "packages", "migrations", "scripts/demo"]) {
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "tsconfig.base.json",
+    ".dockerignore"
+  ])
+    await copySource(file);
+  for (const directory of [
+    "apps/api",
+    "apps/web",
+    "apps/worker",
+    "packages",
+    "migrations",
+    "scripts/demo"
+  ]) {
     await copySource(directory);
   }
   for (const file of [
@@ -158,7 +180,8 @@ async function main() {
     "deployment/demo/demo-nginx.conf",
     "deployment/demo/demo-entry.html",
     "deployment/demo/demo-profile.json"
-  ]) await copySource(file);
+  ])
+    await copySource(file);
 
   const demoDirectory = resolve(repositoryRoot, "deployment/demo");
   const directCopies = [
@@ -171,23 +194,38 @@ async function main() {
   for (const [sourceName, destinationName] of directCopies) {
     await cp(resolve(demoDirectory, sourceName), resolve(packageDirectory, destinationName));
   }
-  const compose = (await readFile(resolve(demoDirectory, "docker-compose.demo.yml"), "utf8"))
-    .replaceAll("context: ../..", "context: .");
+  const compose = (
+    await readFile(resolve(demoDirectory, "docker-compose.demo.yml"), "utf8")
+  ).replaceAll("context: ../..", "context: .");
   await writeFile(resolve(packageDirectory, "docker-compose.demo.yml"), compose, "utf8");
   for (const name of [
-    "demo-start.sh", "demo-status.sh", "demo-health.sh", "demo-reset.sh", "demo-stop.sh",
-    "demo-start.ps1", "demo-status.ps1", "demo-health.ps1", "demo-reset.ps1", "demo-stop.ps1"
+    "demo-start.sh",
+    "demo-status.sh",
+    "demo-health.sh",
+    "demo-reset.sh",
+    "demo-stop.sh",
+    "demo-start.ps1",
+    "demo-status.ps1",
+    "demo-health.ps1",
+    "demo-reset.ps1",
+    "demo-stop.ps1"
   ]) {
     const destination = resolve(packageDirectory, name);
     await cp(resolve(repositoryRoot, "scripts/demo", name), destination);
     if (name.endsWith(".sh")) await chmod(destination, 0o755);
   }
-  await cp(resolve(repositoryRoot, "scripts/demo/scenarios.json"), resolve(packageDirectory, "scenarios.json"));
+  await cp(
+    resolve(repositoryRoot, "scripts/demo/scenarios.json"),
+    resolve(packageDirectory, "scenarios.json")
+  );
 
   const metadataDirectory = resolve(packageDirectory, "metadata");
   await mkdir(metadataDirectory, { recursive: true });
   const sbom = await generateSbom(repositoryRoot, resolve(metadataDirectory, "sbom.cdx.json"));
-  const licenses = await generateLicenseInventory(repositoryRoot, resolve(metadataDirectory, "licenses.json"));
+  const licenses = await generateLicenseInventory(
+    repositoryRoot,
+    resolve(metadataDirectory, "licenses.json")
+  );
   const manifest = {
     format: "erp-express-peru-demo-version-manifest",
     version: 1,
@@ -195,7 +233,7 @@ async function main() {
     packageName,
     environment: "demo",
     sourceDateEpoch: Number(process.env.SOURCE_DATE_EPOCH ?? 0),
-    databaseMigrations: "0001..0010",
+    databaseMigrations: "0001..0015",
     scenarios: ["A", "B", "C"],
     providers: {
       electronicInvoicing: "mock",
@@ -217,21 +255,33 @@ async function main() {
     dataClassification: "synthetic-demo-only",
     productionSuitable: false
   };
-  await writeFile(resolve(metadataDirectory, "version-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  await writeFile(
+    resolve(metadataDirectory, "version-manifest.json"),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+    "utf8"
+  );
   const checksumCount = await writeChecksums();
   await checkDemoSecrets(repositoryRoot, packageDirectory);
   await createZip(packageDirectory, archiveFile);
   const smoke = await smokeDemoPackage(packageDirectory, archiveFile);
   const archive = await stat(archiveFile);
-  const archiveSha256 = createHash("sha256").update(await readFile(archiveFile)).digest("hex");
+  const archiveSha256 = createHash("sha256")
+    .update(await readFile(archiveFile))
+    .digest("hex");
   await writeFile(`${archiveFile}.sha256`, `${archiveSha256}  ${basename(archiveFile)}\n`, "utf8");
-  console.log(JSON.stringify({
-    artifact: relative(repositoryRoot, archiveFile).replaceAll("\\", "/"),
-    bytes: archive.size,
-    sha256: archiveSha256,
-    checksumCount,
-    smoke
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        artifact: relative(repositoryRoot, archiveFile).replaceAll("\\", "/"),
+        bytes: archive.size,
+        sha256: archiveSha256,
+        checksumCount,
+        smoke
+      },
+      null,
+      2
+    )
+  );
 }
 
 await main();

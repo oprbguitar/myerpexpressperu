@@ -13,7 +13,7 @@ services:
     volumes:
       - demo_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      test: ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
       interval: 3s
       timeout: 3s
       retries: 30
@@ -55,7 +55,7 @@ services:
     networks: [demo_internal]
 
   migrate:
-    image: erp-express-peru-demo-runtime:0.3.0
+    image: erp-express-peru-demo-runtime:0.4.0
     build:
       context: ../..
       dockerfile: deployment/demo/runtime.Dockerfile
@@ -99,7 +99,7 @@ services:
     networks: [demo_internal]
 
   seed:
-    image: erp-express-peru-demo-runtime:0.3.0
+    image: erp-express-peru-demo-runtime:0.4.0
     pull_policy: never
     depends_on:
       provision-roles: { condition: service_completed_successfully }
@@ -117,7 +117,7 @@ services:
     networks: [demo_internal]
 
   api:
-    image: erp-express-peru-demo-runtime:0.3.0
+    image: erp-express-peru-demo-runtime:0.4.0
     pull_policy: never
     restart: unless-stopped
     depends_on:
@@ -145,7 +145,7 @@ services:
     networks: [demo_internal]
 
   worker:
-    image: erp-express-peru-demo-runtime:0.3.0
+    image: erp-express-peru-demo-runtime:0.4.0
     pull_policy: never
     restart: unless-stopped
     depends_on:
@@ -158,7 +158,7 @@ services:
     networks: [demo_internal]
 
   web:
-    image: erp-express-peru-demo-web:0.3.0
+    image: erp-express-peru-demo-web:0.4.0
     build:
       context: ../..
       dockerfile: deployment/demo/web.Dockerfile
@@ -177,7 +177,7 @@ services:
     networks: [demo_internal]
 
   demo-reset:
-    image: erp-express-peru-demo-runtime:0.3.0
+    image: erp-express-peru-demo-runtime:0.4.0
     pull_policy: never
     profiles: [tools]
     depends_on:

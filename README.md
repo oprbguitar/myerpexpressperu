@@ -8,9 +8,49 @@
 [![TypeScript estricto](https://img.shields.io/badge/TypeScript-estricto-082f53.svg)](tsconfig.json)
 
 **[Ver presentación pública](https://oprbguitar.github.io/myerpexpressperu/)** ·
+**[Descargar demo portable v0.4.0](https://github.com/oprbguitar/myerpexpressperu/releases/download/v0.4.0/erp-express-peru-demo-v0.4.0.zip)** ·
 **[Arquitectura](docs/ARCHITECTURE.md)** ·
 **[Gestión de residuos](docs/WASTE-MANAGEMENT.md)** ·
 **[Reporte técnico](docs/PHASE-3-REPORT.md)**
+
+![Arquitectura animada de ERP Express Perú](docs/assets/erp-express-architecture-animated.svg)
+
+## Descarga portable
+
+La edición demostrativa se distribuye como un ZIP autocontenido para Windows,
+Linux y macOS. No necesita Node.js ni pnpm: requiere un runtime compatible con
+Docker Compose y descarga sus imágenes durante el primer inicio.
+
+### [Descargar ERP Express Perú Demo v0.4.0](https://github.com/oprbguitar/myerpexpressperu/releases/download/v0.4.0/erp-express-peru-demo-v0.4.0.zip)
+
+| Elemento   | Detalle                                                            |
+| ---------- | ------------------------------------------------------------------ |
+| Paquete    | `erp-express-peru-demo-v0.4.0.zip`                                 |
+| Tamaño     | 2 813 135 bytes (2.68 MiB)                                         |
+| Integridad | `452c2d7a4e83d5c795f1d0658f520b10c1c9008e5450741d77c51c1fb440a45d` |
+| Evidencia  | 282 checksums, 742 componentes SBOM y 812 paquetes inventariados   |
+| Datos      | Exclusivamente sintéticos y deterministas                          |
+| Entorno    | Demostración local; no apta para producción                        |
+
+Descargue también el
+[archivo SHA-256](https://github.com/oprbguitar/myerpexpressperu/releases/download/v0.4.0/erp-express-peru-demo-v0.4.0.zip.sha256)
+para comprobar la integridad fuera del ZIP.
+
+Inicio en Windows PowerShell:
+
+```powershell
+Expand-Archive .\erp-express-peru-demo-v0.4.0.zip
+Set-Location .\erp-express-peru-demo-portable-v0.4.0
+.\demo-start.ps1
+.\demo-status.ps1
+```
+
+Luego abra `http://localhost:18080/demo/`. Consulte la
+[guía portable completa](docs/PORTABLE-DEMO.md) y las
+[notas técnicas versionadas](docs/releases/v0.4.0.md).
+
+> La descarga es una demostración técnica aislada. No conecte datos reales,
+> certificados, API keys ni servicios productivos.
 
 ![Gestión operativa de residuos](docs/design/waste-operations-final-1440x900.png)
 
@@ -21,9 +61,23 @@ peruanas. Reúne operación comercial, administración, CRM, proyectos, recursos
 humanos ligero, SST, activos, privacidad, documentos legales y una cadena
 operativa de gestión de residuos.
 
-El proyecto prioriza límites de dominio explícitos, aislamiento por tenant y
-empresa, proveedores reemplazables y verificaciones reproducibles. No depende de
-un proveedor opcional para arrancar.
+El producto está concebido para que una organización pueda registrar su
+operación diaria, conservar trazabilidad y evolucionar por módulos sin convertir
+cada capacidad en un servicio aislado. Mantiene una sola unidad de despliegue,
+pero separa las reglas de negocio, contratos, adaptadores, persistencia,
+presentación y trabajos asíncronos.
+
+El proyecto prioriza:
+
+- límites de dominio explícitos y TypeScript estricto;
+- aislamiento por tenant y empresa derivados de la sesión;
+- proveedores externos reemplazables y deshabilitados por defecto;
+- migraciones transaccionales reversibles y políticas PostgreSQL RLS;
+- auditoría, idempotencia, outbox y concurrencia optimista;
+- pruebas reproducibles, escaneo de secretos, SBOM y control de licencias.
+
+Ningún proveedor opcional es requisito de arranque. Las capacidades de IA, OCR
+y geocodificación permanecen gobernadas y no ejecutan acciones consecuenciales.
 
 ## Capacidades implementadas
 
@@ -40,16 +94,24 @@ un proveedor opcional para arrancar.
 
 El módulo `/residuos` implementa una cadena consecutiva de nueve fases:
 
-```text
-Generación → Clasificación → Segregación → Almacenamiento inicial
-→ Traslado interno → Almacén central → Despacho → Destino final
-→ Cierre interno
-```
+![Ciclo animado de gestión de residuos](docs/assets/waste-lifecycle-animated.svg)
 
 Incluye idempotencia, control de concurrencia, auditoría, outbox, RLS y una
 interfaz adaptable con inspector contextual. El cierre interno permanece
 bloqueado hasta implementar aprobación segregada y evidencia documental
 vinculada.
+
+### Recorrido funcional
+
+1. El usuario autenticado registra la generación del residuo dentro de su
+   empresa activa.
+2. Cada transición valida la fase previa, versión y permisos antes de persistir.
+3. Las excepciones operativas quedan visibles en una cola con severidad e
+   historial.
+4. El inspector contextual reúne fase, responsable, eventos y excepciones sin
+   abandonar el libro operativo.
+5. El destino final puede registrarse; el cierre interno se rechaza hasta que
+   exista un flujo de aprobación separado.
 
 ## Arquitectura
 
@@ -63,6 +125,16 @@ flowchart LR
     WORKER --> DB
     PROVIDERS["Proveedores opcionales"] -. implementan .-> CONTRACTS
 ```
+
+| Capa                 | Responsabilidad                                                         |
+| -------------------- | ----------------------------------------------------------------------- |
+| `apps/web`           | Presentación React, navegación, formularios y borradores revisables     |
+| `apps/api`           | Transporte HTTP, sesión, autorización, casos de uso y adaptadores       |
+| `apps/worker`        | Jobs idempotentes y procesamiento asíncrono                             |
+| `packages/domain`    | Estados, invariantes y transiciones sin dependencias de infraestructura |
+| `packages/contracts` | Puertos hexagonales para almacenamiento y proveedores                   |
+| `packages/database`  | Migraciones, RLS, semillas y acceso PostgreSQL parametrizado            |
+| `packages/security`  | Clasificación, redacción y controles compartidos                        |
 
 - El dominio no importa React, NestJS, PostgreSQL ni proveedores externos.
 - El tenant y la empresa provienen exclusivamente de la sesión.

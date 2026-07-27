@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220" role="img" aria-labelledby="title desc">
+  <title id="title">Ciclo operativo de gestión de residuos</title>
+  <desc id="desc">Nueve fases consecutivas desde generación hasta cierre interno.</desc>
+  <style>
+    .rail { fill: none; stroke: #b8cbd7; stroke-width: 3 }
+    .node { fill: #fff; stroke: #7f9bac; stroke-width: 2 }
+    .number { font: 800 14px Inter,Segoe UI,sans-serif; fill: #082f53; text-anchor: middle }
+    .label { font: 700 13px Inter,Segoe UI,sans-serif; fill: #082f53; text-anchor: middle }
+    .packet { fill: #0b7f68; filter: drop-shadow(0 0 5px #0b7f68); offset-path: path("M70 74H1130"); animation: travel 8s ease-in-out infinite }
+    .locked { fill: #fff8e8; stroke: #b88018 }
+    @keyframes travel { 0%,5% { offset-distance: 0% } 95%,100% { offset-distance: 100% } }
+    @media (prefers-reduced-motion: reduce) { .packet { display: none } }
+  </style>
+  <rect width="1200" height="220" rx="18" fill="#f8fbfd"/>
+  <path class="rail" d="M70 74H1130"/>
+  <circle class="packet" cx="0" cy="0" r="7"/>
+
+  <g transform="translate(70 74)"><circle class="node" r="24"/><text class="number" y="5">1</text><text class="label" y="58">Generación</text></g>
+  <g transform="translate(202 74)"><circle class="node" r="24"/><text class="number" y="5">2</text><text class="label" y="58">Clasificación</text></g>
+  <g transform="translate(335 74)"><circle class="node" r="24"/><text class="number" y="5">3</text><text class="label" y="58">Segregación</text></g>
+  <g transform="translate(467 74)"><circle class="node" r="24"/><text class="number" y="5">4</text><text class="label" y="54">Almacenamiento</text><text class="label" y="72">inicial</text></g>
+  <g transform="translate(600 74)"><circle class="node" r="24"/><text class="number" y="5">5</text><text class="label" y="54">Traslado</text><text class="label" y="72">interno</text></g>
+  <g transform="translate(732 74)"><circle class="node" r="24"/><text class="number" y="5">6</text><text class="label" y="54">Almacén</text><text class="label" y="72">central</text></g>
+  <g transform="translate(865 74)"><circle class="node" r="24"/><text class="number" y="5">7</text><text class="label" y="58">Despacho</text></g>
+  <g transform="translate(997 74)"><circle class="node" r="24"/><text class="number" y="5">8</text><text class="label" y="54">Destino</text><text class="label" y="72">final</text></g>
+  <g transform="translate(1130 74)"><circle class="node locked" r="24"/><text class="number" y="5">9</text><text class="label" y="54">Cierre</text><text class="label" y="72">interno</text></g>
+
+  <text x="600" y="188" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-size="13" fill="#5b7083">
+    El cierre interno permanece bloqueado hasta contar con aprobación segregada y evidencia vinculada.
+  </text>
+</svg>

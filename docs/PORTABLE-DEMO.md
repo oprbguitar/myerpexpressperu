@@ -5,9 +5,9 @@
 El ensamblador produce:
 
 ```text
-dist/demo/erp-express-peru-demo-portable-v0.3.0/
-dist/demo/erp-express-peru-demo-v0.3.0.zip
-dist/demo/erp-express-peru-demo-v0.3.0.zip.sha256
+dist/demo/erp-express-peru-demo-portable-v0.4.0/
+dist/demo/erp-express-peru-demo-v0.4.0.zip
+dist/demo/erp-express-peru-demo-v0.4.0.zip.sha256
 ```
 
 El directorio contiene Compose, configuración sin secretos, scripts Windows y
@@ -97,7 +97,7 @@ web/API/worker, migra, siembra y muestra las credenciales generadas localmente.
 {
   "demo:build": "node scripts/demo/build-package.mjs",
   "demo:verify": "node scripts/demo/verify-config.mjs && node scripts/demo/check-secrets.mjs",
-  "demo:smoke": "node scripts/demo/demo-smoke.mjs dist/demo/erp-express-peru-demo-portable-v0.3.0 dist/demo/erp-express-peru-demo-v0.3.0.zip",
+  "demo:smoke": "node scripts/demo/demo-smoke.mjs dist/demo/erp-express-peru-demo-portable-v0.4.0 dist/demo/erp-express-peru-demo-v0.4.0.zip",
   "sbom:generate": "node scripts/demo/generate-sbom.mjs . dist/demo/sbom.cdx.json",
   "licenses:check": "node scripts/demo/generate-licenses.mjs . dist/demo/licenses.json"
 }

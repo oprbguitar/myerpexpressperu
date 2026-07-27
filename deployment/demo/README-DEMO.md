@@ -1,6 +1,6 @@
 # ERP Express Perú — demostración portable
 
-Versión del paquete: `0.3.0`.
+Versión del paquete: `0.4.0`.
 
 Este paquete levanta una demostración local y aislada de ERP Express Perú. Todos
 los nombres, documentos, correos, teléfonos, operaciones y montos son sintéticos.
@@ -17,6 +17,9 @@ La demostración:
 - usa facturación electrónica mock, OCR mock, geocodificación manual y correo
   deshabilitado;
 - inicia con IA externa deshabilitada;
+- incorpora el módulo de seguimiento operativo de residuos, con el cierre
+  interno deshabilitado hasta contar con aprobación segregada y evidencia
+  documental vinculada;
 - no contiene credenciales: el comando de inicio genera secretos locales en
   `.env.demo`, archivo excluido del ZIP.
 
@@ -83,4 +86,3 @@ restaura la semilla determinista y registra `DemoResetJob` y
 - archivo `.zip.sha256`: checksum del ZIP.
 
 Lea [QUICKSTART.md](QUICKSTART.md) para iniciar, comprobar, resetear y detener.
-

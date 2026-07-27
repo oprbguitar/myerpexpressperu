@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Arquitectura modular de ERP Express Perú</title>
+  <desc id="desc">Flujo animado entre la interfaz web, API, dominio, base de datos, worker y proveedores opcionales.</desc>
+  <style>
+    .label { font: 700 18px Inter,Segoe UI,sans-serif; fill: #082f53 }
+    .detail { font: 500 13px Inter,Segoe UI,sans-serif; fill: #5b7083 }
+    .line { fill: none; stroke: #9bb4c4; stroke-width: 2; stroke-dasharray: 7 7 }
+    .line-active { fill: none; stroke: #0b7f68; stroke-width: 3; stroke-dasharray: 12 18; animation: flow 2.8s linear infinite }
+    .node { fill: #fff; stroke: #c8d7e1; stroke-width: 2 }
+    .node-core { fill: #e9f6f2; stroke: #0b7f68; stroke-width: 2 }
+    .icon { fill: none; stroke: #0b7f68; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round }
+    .optional { stroke-dasharray: 5 5 }
+    @keyframes flow { to { stroke-dashoffset: -60 } }
+    @media (prefers-reduced-motion: reduce) { .line-active { animation: none } }
+  </style>
+  <rect width="1200" height="420" rx="20" fill="#f3f7fa"/>
+  <path class="line" d="M210 210H375M525 210H675M825 210H990"/>
+  <path class="line" d="M750 140V72M750 280V350"/>
+  <path class="line-active" d="M210 210H375M525 210H675M825 210H990"/>
+  <path class="line-active" d="M750 140V72M750 280V350"/>
+
+  <g transform="translate(40 140)">
+    <rect class="node" width="170" height="140" rx="12"/>
+    <path class="icon" d="M30 34h42v30H30zM25 72h52"/>
+    <text class="label" x="24" y="101">apps/web</text>
+    <text class="detail" x="24" y="123">React + Vite</text>
+  </g>
+
+  <g transform="translate(375 140)">
+    <rect class="node" width="150" height="140" rx="12"/>
+    <path class="icon" d="M26 36h42v30H26M33 44h28M33 52h20"/>
+    <text class="label" x="22" y="101">apps/api</text>
+    <text class="detail" x="22" y="123">NestJS + Fastify</text>
+  </g>
+
+  <g transform="translate(675 140)">
+    <rect class="node-core" width="150" height="140" rx="12"/>
+    <path class="icon" d="M29 55l22-17 22 17-22 17zM51 38v34"/>
+    <text class="label" x="21" y="101">Dominio</text>
+    <text class="detail" x="21" y="123">Reglas e invariantes</text>
+  </g>
+
+  <g transform="translate(990 140)">
+    <rect class="node" width="170" height="140" rx="12"/>
+    <ellipse class="icon" cx="52" cy="40" rx="25" ry="10"/>
+    <path class="icon" d="M27 40v32c0 6 11 10 25 10s25-4 25-10V40M27 56c0 6 11 10 25 10s25-4 25-10"/>
+    <text class="label" x="22" y="107">PostgreSQL</text>
+    <text class="detail" x="22" y="129">RLS por contexto</text>
+  </g>
+
+  <g transform="translate(655 20)">
+    <rect class="node" width="190" height="52" rx="10"/>
+    <text class="label" x="20" y="24">apps/worker</text>
+    <text class="detail" x="20" y="43">Jobs idempotentes</text>
+  </g>
+
+  <g transform="translate(640 350)">
+    <rect class="node optional" width="220" height="52" rx="10"/>
+    <text class="label" x="20" y="24">Proveedores opcionales</text>
+    <text class="detail" x="20" y="43">Adaptadores reemplazables</text>
+  </g>
+</svg>

@@ -13,8 +13,17 @@ import reactHooks from "eslint-plugin-react-hooks";
 export default tseslint.config(
   {
     ignores: [
-      "**/dist/**", "**/dev-dist/**", "**/coverage/**", "playwright-report/**", "**/test-results/**",
-      "eslint.config.mjs", "scripts/**", "tests/**", "playwright.config.ts", "**/*.test.ts"
+      "**/dist/**",
+      "**/dev-dist/**",
+      "**/coverage/**",
+      "playwright-report/**",
+      "**/test-results/**",
+      "eslint.config.mjs",
+      "scripts/**",
+      "site/**",
+      "tests/**",
+      "playwright.config.ts",
+      "**/*.test.ts"
     ]
   },
   eslint.configs.recommended,
@@ -30,8 +39,7 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": "error"
     }
-  }
-  ,
+  },
   {
     files: ["**/*.tsx"],
     rules: { "@typescript-eslint/unbound-method": "off" }

@@ -1,6 +1,6 @@
 # Historial de cambios
 
-## No publicado — 2026-07-27
+## 0.4.0 — 2026-07-27
 
 ### Añadido
 
@@ -26,4 +26,5 @@
 
 - se preservaron rutas y módulos existentes;
 - no se añadieron dependencias ni variables de entorno;
-- no hubo despliegue remoto ni publicación.
+- se publicó una vitrina estática accesible mediante GitHub Pages;
+- se añadió un paquete portable verificable distribuido como GitHub Release.

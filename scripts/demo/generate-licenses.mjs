@@ -13,16 +13,21 @@ async function readPackage(file) {
   try {
     const parsed = JSON.parse(await readFile(file, "utf8"));
     if (typeof parsed.name !== "string" || typeof parsed.version !== "string") return null;
-    const license = typeof parsed.license === "string"
-      ? parsed.license
-      : Array.isArray(parsed.licenses)
-        ? parsed.licenses.map((item) => typeof item === "string" ? item : item?.type).filter(Boolean).join(" OR ")
-        : "UNKNOWN";
+    const license =
+      typeof parsed.license === "string"
+        ? parsed.license
+        : Array.isArray(parsed.licenses)
+          ? parsed.licenses
+              .map((item) => (typeof item === "string" ? item : item?.type))
+              .filter(Boolean)
+              .join(" OR ")
+          : "UNKNOWN";
     return {
       name: parsed.name,
       version: parsed.version,
       license,
-      repository: typeof parsed.repository === "string" ? parsed.repository : parsed.repository?.url ?? null
+      repository:
+        typeof parsed.repository === "string" ? parsed.repository : (parsed.repository?.url ?? null)
     };
   } catch {
     return null;
@@ -59,7 +64,9 @@ export async function generateLicenseInventory(repositoryRoot, outputFile) {
         }
         for (const scopedChild of scoped) {
           if (!scopedChild.isDirectory()) continue;
-          const item = await readPackage(join(modules, child.name, scopedChild.name, "package.json"));
+          const item = await readPackage(
+            join(modules, child.name, scopedChild.name, "package.json")
+          );
           if (item) packages.set(`${item.name}@${item.version}`, item);
         }
       } else {
@@ -71,7 +78,7 @@ export async function generateLicenseInventory(repositoryRoot, outputFile) {
   const inventory = {
     format: "erp-express-peru-license-inventory",
     version: 1,
-    applicationVersion: "0.3.0",
+    applicationVersion: "0.4.0",
     generatedFrom: "installed package manifests",
     reviewRequired: [...packages.values()].some((item) => item.license === "UNKNOWN"),
     packages: [...packages.values()].sort((left, right) =>
@@ -86,5 +93,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const repositoryRoot = resolve(process.argv[2] ?? ".");
   const output = resolve(process.argv[3] ?? "dist/demo/licenses.json");
   const inventory = await generateLicenseInventory(repositoryRoot, output);
-  console.log(`Inventario de licencias generado: ${output} (${inventory.packages.length} paquetes)`);
+  console.log(
+    `Inventario de licencias generado: ${output} (${inventory.packages.length} paquetes)`
+  );
 }

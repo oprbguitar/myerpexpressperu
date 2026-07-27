@@ -109,6 +109,22 @@ Riesgos residuales y siguiente fase:
 - sin resolución de excepciones ni cierre aprobado;
 - pruebas de carga, WCAG completa y despliegue remoto no ejecutados.
 
+## Publicación portable v0.4.0 — 2026-07-27
+
+Se publicó una demostración portable con migraciones `0001`–`0015`, 282
+checksums internos, SBOM CycloneDX de 742 componentes e inventario de 812
+paquetes. El ZIP pesa 2 813 135 bytes y su SHA-256 es
+`452c2d7a4e83d5c795f1d0658f520b10c1c9008e5450741d77c51c1fb440a45d`.
+
+`pnpm demo:build` y `pnpm demo:smoke` pasaron; la configuración Docker Compose
+fue validada. La distribución sigue siendo exclusivamente demostrativa y no
+apta para producción.
+
+La publicación también pasó `pnpm phase3:verify`, migración y semilla local,
+26 pruebas E2E ejecutadas (10 omitidas por matriz), generación de SBOM,
+inventario de licencias y una revisión responsive de la vitrina en escritorio
+y a 390 px sin desbordamiento horizontal ni errores de consola.
+
 ## Evidencia
 
 Los nueve informes especializados están en `docs/phase3/agent-reports/`. La

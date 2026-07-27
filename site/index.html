@@ -21,9 +21,11 @@
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230b7f68' d='M8 12h40l-7 10H22l-8 30H2z'/%3E%3C/svg%3E"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
     <header class="site-header">
       <a class="brand" href="#inicio" aria-label="ERP Express Perú, inicio">
@@ -31,10 +33,10 @@
         <span>ERP Express Perú</span>
       </a>
       <nav aria-label="Navegación principal">
-        <a href="#producto">Producto</a>
-        <a href="#arquitectura">Arquitectura</a>
-        <a href="#calidad">Calidad</a>
-        <a href="#documentacion">Documentación</a>
+        <a href="#producto" data-section-link="producto">Producto</a>
+        <a href="#descarga" data-section-link="descarga">Descarga</a>
+        <a href="#arquitectura" data-section-link="arquitectura">Arquitectura</a>
+        <a href="#calidad" data-section-link="calidad">Calidad</a>
       </nav>
       <a
         class="button button-small"
@@ -51,28 +53,41 @@
         <div class="hero-copy">
           <h1>ERP Express Perú</h1>
           <p>
-            Monolito modular portable para gestión empresarial, con trazabilidad, seguridad por
-            diseño y operación verificable.
+            Una base empresarial portable para registrar operaciones, gobernar módulos y conservar
+            trazabilidad con seguridad por diseño.
           </p>
+          <ul class="hero-proof" aria-label="Principios técnicos">
+            <li>Monolito modular</li>
+            <li>PostgreSQL con RLS</li>
+            <li>Demo verificable</li>
+          </ul>
           <div class="hero-actions">
-            <a class="button" href="#producto"
-              >Explorar el proyecto <span aria-hidden="true">→</span></a
-            >
             <a
-              class="button button-secondary"
-              href="https://github.com/oprbguitar/myerpexpressperu#readme"
+              class="button"
+              href="https://github.com/oprbguitar/myerpexpressperu/releases/download/v0.4.0/erp-express-peru-demo-v0.4.0.zip"
+              >Descargar demo v0.4.0 <span aria-hidden="true">↓</span></a
             >
-              Ver documentación <span aria-hidden="true">↗</span>
+            <a class="button button-secondary" href="#producto">
+              Explorar el producto <span aria-hidden="true">→</span>
             </a>
           </div>
+          <p class="hero-note">ZIP portable · Datos sintéticos · Uso local con Docker Compose</p>
         </div>
-        <div class="technical-grid" aria-hidden="true"></div>
+        <div class="technical-grid" aria-hidden="true">
+          <span class="signal signal-one"></span>
+          <span class="signal signal-two"></span>
+          <span class="signal signal-three"></span>
+        </div>
       </section>
 
-      <section class="product" id="producto" aria-labelledby="producto-titulo">
+      <section class="product reveal" id="producto" aria-labelledby="producto-titulo">
         <div class="section-heading">
-          <p>Producto verificable</p>
+          <p>Una operación, un contexto</p>
           <h2 id="producto-titulo">Cadena de custodia operativa</h2>
+          <p class="section-summary">
+            La pantalla reúne el registro, las nueve fases, la cola de excepciones y el detalle
+            contextual para reducir saltos y conservar la secuencia operativa.
+          </p>
         </div>
         <figure class="product-frame">
           <img
@@ -88,7 +103,72 @@
         </figure>
       </section>
 
-      <section class="architecture" id="arquitectura" aria-labelledby="arquitectura-titulo">
+      <section class="download reveal" id="descarga" aria-labelledby="descarga-titulo">
+        <div class="download-copy">
+          <p>Paquete listo para evaluar</p>
+          <h2 id="descarga-titulo">Descargue, verifique y ejecute.</h2>
+          <p>
+            La versión portable incluye código, configuración Docker, scripts para Windows, Linux y
+            macOS, inventario de licencias, SBOM CycloneDX y checksums SHA-256.
+          </p>
+          <div class="download-actions">
+            <a
+              class="button button-light"
+              href="https://github.com/oprbguitar/myerpexpressperu/releases/download/v0.4.0/erp-express-peru-demo-v0.4.0.zip"
+            >
+              Descargar ZIP <span aria-hidden="true">↓</span>
+            </a>
+            <a
+              class="text-link"
+              href="https://github.com/oprbguitar/myerpexpressperu/releases/tag/v0.4.0"
+            >
+              Ver notas y checksum <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <dl class="release-facts">
+            <div>
+              <dt>Versión</dt>
+              <dd>0.4.0</dd>
+            </div>
+            <div>
+              <dt>Tamaño</dt>
+              <dd>2.68 MiB</dd>
+            </div>
+            <div>
+              <dt>Checksums</dt>
+              <dd>282</dd>
+            </div>
+            <div>
+              <dt>SBOM</dt>
+              <dd>742 componentes</dd>
+            </div>
+          </dl>
+          <p class="download-limit">
+            Demostración técnica con datos sintéticos. No apta para producción ni para almacenar
+            datos reales.
+          </p>
+        </div>
+        <ol class="package-flow" aria-label="Flujo de instalación">
+          <li>
+            <span>01</span>
+            <div><strong>Descargar</strong><small>ZIP portable v0.4.0</small></div>
+          </li>
+          <li>
+            <span>02</span>
+            <div><strong>Verificar</strong><small>SHA-256 y manifiesto</small></div>
+          </li>
+          <li>
+            <span>03</span>
+            <div><strong>Ejecutar</strong><small>Scripts y Docker Compose</small></div>
+          </li>
+          <li>
+            <span>04</span>
+            <div><strong>Explorar</strong><small>http://localhost:18080/demo/</small></div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="architecture reveal" id="arquitectura" aria-labelledby="arquitectura-titulo">
         <div class="architecture-intro">
           <p>Diseño con propósito</p>
           <h2 id="arquitectura-titulo">
@@ -135,9 +215,21 @@
             </div>
           </article>
         </div>
+        <figure class="system-map">
+          <img
+            src="./assets/erp-express-architecture-animated.svg"
+            alt="Diagrama animado del flujo entre web, API, dominio, worker, proveedores y PostgreSQL"
+            width="1200"
+            height="420"
+          />
+          <figcaption>
+            El dominio permanece independiente; la infraestructura se conecta mediante contratos
+            explícitos.
+          </figcaption>
+        </figure>
       </section>
 
-      <section class="quality" id="calidad" aria-label="Evidencia de calidad">
+      <section class="quality reveal" id="calidad" aria-label="Evidencia de calidad">
         <article>
           <strong>95</strong>
           <span>pruebas unitarias</span>
@@ -156,11 +248,22 @@
         </article>
       </section>
 
-      <section class="lifecycle" aria-labelledby="ciclo-titulo">
+      <section class="lifecycle reveal" aria-labelledby="ciclo-titulo">
         <div class="section-heading">
           <p>Gestión de residuos</p>
           <h2 id="ciclo-titulo">Ciclo de vida operativo</h2>
+          <p class="section-summary">
+            Cada avance valida la fase anterior y conserva un evento trazable. El cierre interno se
+            mantiene fuera del flujo ordinario.
+          </p>
         </div>
+        <img
+          class="lifecycle-graphic"
+          src="./assets/waste-lifecycle-animated.svg"
+          alt="Gráfico animado de las nueve fases operativas de gestión de residuos"
+          width="1200"
+          height="220"
+        />
         <ol>
           <li><span>1</span>Generación</li>
           <li><span>2</span>Clasificación</li>
@@ -179,7 +282,7 @@
         </p>
       </section>
 
-      <section class="docs" id="documentacion" aria-labelledby="documentacion-titulo">
+      <section class="docs reveal" id="documentacion" aria-labelledby="documentacion-titulo">
         <div class="section-heading">
           <p>Documentación</p>
           <h2 id="documentacion-titulo">Recursos para explorar y ejecutar el proyecto</h2>
@@ -206,6 +309,11 @@
             <span>04</span>
             <strong>Gestión de residuos</strong>
             <small>Alcance, permisos y límites del módulo.</small>
+          </a>
+          <a href="https://github.com/oprbguitar/myerpexpressperu/releases/tag/v0.4.0">
+            <span>05</span>
+            <strong>Descarga portable</strong>
+            <small>ZIP, SHA-256, SBOM y notas de la versión.</small>
           </a>
         </div>
       </section>

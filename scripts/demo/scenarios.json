@@ -1,25 +1,51 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "dataClassification": "synthetic-demo-only",
   "scenarios": [
     {
       "code": "A",
       "name": "Servicios profesionales",
       "description": "CRM, cotización, proyecto, tiempo, gasto y cobranza con entidades ficticias.",
-      "capabilities": ["crm", "quotations", "projects", "time", "expenses", "invoicing-manual-mock", "receivables"]
+      "capabilities": [
+        "crm",
+        "quotations",
+        "projects",
+        "time",
+        "expenses",
+        "invoicing-manual-mock",
+        "receivables"
+      ]
     },
     {
       "code": "B",
       "name": "Pyme comercial",
       "description": "Catálogo, inventario, compra, venta, caja y saldos con entidades ficticias.",
-      "capabilities": ["customers", "suppliers", "products", "warehouse", "sales", "purchases", "cash", "receivables", "payables"]
+      "capabilities": [
+        "customers",
+        "suppliers",
+        "products",
+        "warehouse",
+        "sales",
+        "purchases",
+        "cash",
+        "receivables",
+        "payables"
+      ]
     },
     {
       "code": "C",
       "name": "Contratista",
       "description": "Proyecto, personal, SST, activo, mantenimiento y documentos mock.",
-      "capabilities": ["contract-reference", "projects", "employees", "sst", "assets", "maintenance", "documents-mock", "dashboard"]
+      "capabilities": [
+        "contract-reference",
+        "projects",
+        "employees",
+        "sst",
+        "assets",
+        "maintenance",
+        "documents-mock",
+        "dashboard"
+      ]
     }
   ]
 }
-

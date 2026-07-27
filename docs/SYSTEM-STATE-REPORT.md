@@ -26,13 +26,13 @@ verdict: PHASE_4_NOT_READY
 
 ## 0. Metadatos del documento
 
-| Campo | Valor |
-| --- | --- |
-| Estados usados | ver §0.1 |
-| Base de la verificación | código + ejecución real (BD viva) |
-| Revisión humana | pendiente |
-| Veredicto | `PHASE_4_NOT_READY` |
-| Autoridad en conflicto | ante contradicción, prevalecen `docs/reviews/` y `docs/stabilization/` |
+| Campo                   | Valor                                                                  |
+| ----------------------- | ---------------------------------------------------------------------- |
+| Estados usados          | ver §0.1                                                               |
+| Base de la verificación | código + ejecución real (BD viva)                                      |
+| Revisión humana         | pendiente                                                              |
+| Veredicto               | `PHASE_4_NOT_READY`                                                    |
+| Autoridad en conflicto  | ante contradicción, prevalecen `docs/reviews/` y `docs/stabilization/` |
 
 ### 0.1 Enumeración de estados
 
@@ -65,52 +65,52 @@ NOT_APPLICABLE
 
 ## 2. Versión y métricas técnicas (verificadas 2026-07-24)
 
-| Métrica | Valor | Fuente |
-| --- | --- | --- |
-| Versión de aplicación | 0.1.0 | `package.json` |
-| Versión de paquete demo | 0.3.0 | `scripts/demo` |
-| Archivos `.ts/.tsx` (apps/packages/modules) | 168 | `find` |
-| Archivos con encabezado SPDX | 249 / 249 | `pnpm license:headers` |
-| Líneas de código (apps + packages) | 18 465 | `wc -l` |
-| Tablas de base de datos | **209** | `pg_class` (viva) |
-| Pares de migración | **13** | `ls migrations` |
-| Tablas con RLS habilitada | **189** | `pg_class.relrowsecurity` |
-| Tablas con FORCE RLS | **189** | `pg_class.relforcerowsecurity` |
-| Tablas con política | **189** | `pg_policies` |
-| Roles de base de datos | 2 (`erp`, `erp_app`) | `pg_roles` |
-| Triggers | 25 | `pg_trigger` |
-| Permisos definidos | 199 | `seed.ts` |
-| Roles de aplicación (seed) | 6 | seed |
-| Módulos en el registro | 47 (4 `implemented:false`) | `packages/domain/src/index.ts` |
-| Endpoints HTTP | ~147 | decoradores |
-| Controladores NestJS | 25 | `find` |
-| Páginas React | 23 | `find` |
-| Pruebas pasadas / omitidas / falladas | **147 / 10 / 0** | ejecución real (tras S2) |
-| — unitarias | 90 | domain 41, security 17, api 16, web 9, database 7 |
-| — integración | 22 | incluye 5 de aislamiento RLS |
-| — compliance | 15 | |
-| — e2e | 20 (+10 omitidas por proyecto) | incluye 2 de enforcement de módulos |
-| Cobertura (domain/security/api) | 79.8% / 81.5% / 11.0% | `@vitest/coverage-v8` |
-| Trabajos de CI | 5 (configurados, no ejecutados en remoto) | `ci.yml` |
-| Componentes SBOM | 742 | `sbom:generate:project` |
-| Registros de procedencia | **11** (todos `accepted:false`) | `docs/compliance/ai-provenance/` |
+| Métrica                                     | Valor                                     | Fuente                                            |
+| ------------------------------------------- | ----------------------------------------- | ------------------------------------------------- |
+| Versión de aplicación                       | 0.1.0                                     | `package.json`                                    |
+| Versión de paquete demo                     | 0.4.0                                     | `scripts/demo`                                    |
+| Archivos `.ts/.tsx` (apps/packages/modules) | 168                                       | `find`                                            |
+| Archivos con encabezado SPDX                | 249 / 249                                 | `pnpm license:headers`                            |
+| Líneas de código (apps + packages)          | 18 465                                    | `wc -l`                                           |
+| Tablas de base de datos                     | **209**                                   | `pg_class` (viva)                                 |
+| Pares de migración                          | **13**                                    | `ls migrations`                                   |
+| Tablas con RLS habilitada                   | **189**                                   | `pg_class.relrowsecurity`                         |
+| Tablas con FORCE RLS                        | **189**                                   | `pg_class.relforcerowsecurity`                    |
+| Tablas con política                         | **189**                                   | `pg_policies`                                     |
+| Roles de base de datos                      | 2 (`erp`, `erp_app`)                      | `pg_roles`                                        |
+| Triggers                                    | 25                                        | `pg_trigger`                                      |
+| Permisos definidos                          | 199                                       | `seed.ts`                                         |
+| Roles de aplicación (seed)                  | 6                                         | seed                                              |
+| Módulos en el registro                      | 47 (4 `implemented:false`)                | `packages/domain/src/index.ts`                    |
+| Endpoints HTTP                              | ~147                                      | decoradores                                       |
+| Controladores NestJS                        | 25                                        | `find`                                            |
+| Páginas React                               | 23                                        | `find`                                            |
+| Pruebas pasadas / omitidas / falladas       | **147 / 10 / 0**                          | ejecución real (tras S2)                          |
+| — unitarias                                 | 90                                        | domain 41, security 17, api 16, web 9, database 7 |
+| — integración                               | 22                                        | incluye 5 de aislamiento RLS                      |
+| — compliance                                | 15                                        |                                                   |
+| — e2e                                       | 20 (+10 omitidas por proyecto)            | incluye 2 de enforcement de módulos               |
+| Cobertura (domain/security/api)             | 79.8% / 81.5% / 11.0%                     | `@vitest/coverage-v8`                             |
+| Trabajos de CI                              | 5 (configurados, no ejecutados en remoto) | `ci.yml`                                          |
+| Componentes SBOM                            | 742                                       | `sbom:generate:project`                           |
+| Registros de procedencia                    | **11** (todos `accepted:false`)           | `docs/compliance/ai-provenance/`                  |
 
 Diferencias respecto a valores previos: ver `REPORT-RECONCILIATION.md`.
 
 ## 3. Progreso de estabilización
 
-| Etapa | Alcance | Estado |
-| --- | --- | --- |
-| S0 | Línea base + acceso local | ✅ Completa |
-| S1 | Roles PostgreSQL + RLS efectiva | ✅ Completa y verificada |
-| S2 | Enforcement de módulos en runtime | ✅ Completa y verificada |
-| S3 | Integración en cerrado + CI + cobertura | ✅ Completa |
-| S4 | Normalización de errores de API | ⬜ Pendiente |
-| S5 | Checksums de migración | ⬜ Pendiente |
-| S6 | Alineación dominio-runtime | ⬜ Pendiente (decisión D-7) |
-| S7 | Fiabilidad del worker | ⬜ Pendiente |
-| S8 | Arquitectura y madurez de módulos | ⬜ Pendiente |
-| S9 | Verificación final | ⬜ Pendiente |
+| Etapa | Alcance                                 | Estado                      |
+| ----- | --------------------------------------- | --------------------------- |
+| S0    | Línea base + acceso local               | ✅ Completa                 |
+| S1    | Roles PostgreSQL + RLS efectiva         | ✅ Completa y verificada    |
+| S2    | Enforcement de módulos en runtime       | ✅ Completa y verificada    |
+| S3    | Integración en cerrado + CI + cobertura | ✅ Completa                 |
+| S4    | Normalización de errores de API         | ⬜ Pendiente                |
+| S5    | Checksums de migración                  | ⬜ Pendiente                |
+| S6    | Alineación dominio-runtime              | ⬜ Pendiente (decisión D-7) |
+| S7    | Fiabilidad del worker                   | ⬜ Pendiente                |
+| S8    | Arquitectura y madurez de módulos       | ⬜ Pendiente                |
+| S9    | Verificación final                      | ⬜ Pendiente                |
 
 ## 4. Capacidades operativas verificadas (`VERIFIED_OPERATIONAL`)
 
@@ -137,27 +137,27 @@ Ejecutadas extremo a extremo en esta sesión o en S1 (con `erp_app` y RLS activa
 
 ## 6. Hallazgos abiertos
 
-| ID | Hallazgo | Severidad | Estado |
-| --- | --- | --- | --- |
-| H-1 | Capa de dominio de Fase 3 es código muerto (869 líneas). | Alta | `BLOCKED_HUMAN_DECISION` (D-7, S6) |
-| H-3 | Superficie de API sin pruebas (`apps/api` 11% cobertura). | Alta | `OPEN` (pruebas HTTP pendientes) |
-| VAL-1 | Errores de validación devuelven 500 en vez de 400. | Media | `OPEN` (S4) |
-| MIG-1 | El runner de migraciones no calcula checksums. | Media | `OPEN` (S5) |
-| WORKER-1 | El worker carece de reintentos/backoff/dead-letter. | Media | `OPEN` (S7) |
+| ID       | Hallazgo                                                  | Severidad | Estado                             |
+| -------- | --------------------------------------------------------- | --------- | ---------------------------------- |
+| H-1      | Capa de dominio de Fase 3 es código muerto (869 líneas).  | Alta      | `BLOCKED_HUMAN_DECISION` (D-7, S6) |
+| H-3      | Superficie de API sin pruebas (`apps/api` 11% cobertura). | Alta      | `OPEN` (pruebas HTTP pendientes)   |
+| VAL-1    | Errores de validación devuelven 500 en vez de 400.        | Media     | `OPEN` (S4)                        |
+| MIG-1    | El runner de migraciones no calcula checksums.            | Media     | `OPEN` (S5)                        |
+| WORKER-1 | El worker carece de reintentos/backoff/dead-letter.       | Media     | `OPEN` (S7)                        |
 
 ## 7. Hallazgos corregidos y evidencia (`FIXED_VERIFIED`)
 
-| ID | Corrección | Evidencia |
-| --- | --- | --- |
-| C-1 | Rol `erp_app` restringido + FORCE RLS + contexto por petición. | Lectura cruzada→0, escritura cruzada→42501; `rls-isolation.test.ts`. `S1-RLS-REMEDIATION.md` |
-| C-3 | `TRUSTED_PROXIES` (proxy no falsificable). | XFF falsificado→127.0.0.1; limitador restaurado. `TRUSTED-PROXY-AND-IP-REVIEW.md` |
-| C-4 | Integración falla sin base; prohibido omitir en CI. | 4 casos probados. `S3-TEST-CI-REMEDIATION.md` |
-| H-2 | Prueba de comportamiento de RLS a través de `erp_app`. | `rls-isolation.test.ts` (5) |
-| H-6 | Cobertura medible (`@vitest/coverage-v8`). | `COVERAGE-BASELINE.md` |
-| H-7 | CI configurada (`ci.yml`, 5 trabajos). | validez remota pendiente del primer push |
-| C-2 | Enforcement de módulos en API (guard + fail-closed). | cash deshabilitado → 409 MODULE_DISABLED; `S2-MODULE-ENFORCEMENT.md` |
-| H-4 | Worker respeta activación de módulos. | filtro EXISTS por generador; ciclo verificado |
-| SUNAT | Deriva de contrato corregida + ErrorBoundary. | render verificado en navegador |
+| ID    | Corrección                                                     | Evidencia                                                                                    |
+| ----- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| C-1   | Rol `erp_app` restringido + FORCE RLS + contexto por petición. | Lectura cruzada→0, escritura cruzada→42501; `rls-isolation.test.ts`. `S1-RLS-REMEDIATION.md` |
+| C-3   | `TRUSTED_PROXIES` (proxy no falsificable).                     | XFF falsificado→127.0.0.1; limitador restaurado. `TRUSTED-PROXY-AND-IP-REVIEW.md`            |
+| C-4   | Integración falla sin base; prohibido omitir en CI.            | 4 casos probados. `S3-TEST-CI-REMEDIATION.md`                                                |
+| H-2   | Prueba de comportamiento de RLS a través de `erp_app`.         | `rls-isolation.test.ts` (5)                                                                  |
+| H-6   | Cobertura medible (`@vitest/coverage-v8`).                     | `COVERAGE-BASELINE.md`                                                                       |
+| H-7   | CI configurada (`ci.yml`, 5 trabajos).                         | validez remota pendiente del primer push                                                     |
+| C-2   | Enforcement de módulos en API (guard + fail-closed).           | cash deshabilitado → 409 MODULE_DISABLED; `S2-MODULE-ENFORCEMENT.md`                         |
+| H-4   | Worker respeta activación de módulos.                          | filtro EXISTS por generador; ciclo verificado                                                |
+| SUNAT | Deriva de contrato corregida + ErrorBoundary.                  | render verificado en navegador                                                               |
 
 ## 8. Base de datos y aislamiento
 
@@ -184,14 +184,14 @@ Servicios verificados por comportamiento — ver §10 de
 [`docs/local/LOCAL-ACCESS-GUIDE.md`](local/LOCAL-ACCESS-GUIDE.md) y
 `docs/stabilization/LOCAL-ACCESS-VERIFICATION.md`.
 
-| Servicio | URL | Estado |
-| --- | --- | --- |
-| Web | http://localhost:5273/ | En ejecución con `pnpm dev` |
-| API | http://localhost:3100/api/v1 | En ejecución |
-| Salud / Readiness | `/api/v1/health` · `/api/v1/health/readiness` | 200 |
-| OpenAPI | http://localhost:3100/api/docs | 200 |
-| MinIO / Mailpit | :9001 · :8025 | 200 |
-| Documentación / Demo | — | `NOT_IMPLEMENTED` / `NOT_STARTED` |
+| Servicio             | URL                                           | Estado                            |
+| -------------------- | --------------------------------------------- | --------------------------------- |
+| Web                  | http://localhost:5273/                        | En ejecución con `pnpm dev`       |
+| API                  | http://localhost:3100/api/v1                  | En ejecución                      |
+| Salud / Readiness    | `/api/v1/health` · `/api/v1/health/readiness` | 200                               |
+| OpenAPI              | http://localhost:3100/api/docs                | 200                               |
+| MinIO / Mailpit      | :9001 · :8025                                 | 200                               |
+| Documentación / Demo | —                                             | `NOT_IMPLEMENTED` / `NOT_STARTED` |
 
 Credenciales locales: archivo gitignored `LOCAL-ACCESS-CREDENTIALS.local.md`.
 Nunca en este informe.
@@ -220,14 +220,14 @@ alcance del rol de BD (D-8, ya ejecutado en S1).
 
 ## 14. Puertas de preparación
 
-| Puerta | Estado | Nota |
-| --- | --- | --- |
-| Arquitectura | CONDITIONAL_PASS | C-2 cerrado (S2); queda H-1 (dominio muerto, decisión D-7) y unificación de estructura (S8) |
-| Base de datos | CONDITIONAL_PASS | RLS efectiva (S1); faltan checksums (S5) |
-| Seguridad | FAIL | proxy corregido; falta MFA, revocación admin, IDOR |
-| Fiabilidad | FAIL | worker sin modelo de reintentos; sin staging/respaldo |
-| Calidad | CONDITIONAL_PASS | integración en cerrado + CI + cobertura; falta cobertura de API y e2e en CI |
-| Gobernanza | CONDITIONAL_PASS | licenciamiento/procedencia ok; titularidad y revisión humana pendientes |
+| Puerta        | Estado           | Nota                                                                                        |
+| ------------- | ---------------- | ------------------------------------------------------------------------------------------- |
+| Arquitectura  | CONDITIONAL_PASS | C-2 cerrado (S2); queda H-1 (dominio muerto, decisión D-7) y unificación de estructura (S8) |
+| Base de datos | CONDITIONAL_PASS | RLS efectiva (S1); faltan checksums (S5)                                                    |
+| Seguridad     | FAIL             | proxy corregido; falta MFA, revocación admin, IDOR                                          |
+| Fiabilidad    | FAIL             | worker sin modelo de reintentos; sin staging/respaldo                                       |
+| Calidad       | CONDITIONAL_PASS | integración en cerrado + CI + cobertura; falta cobertura de API y e2e en CI                 |
+| Gobernanza    | CONDITIONAL_PASS | licenciamiento/procedencia ok; titularidad y revisión humana pendientes                     |
 
 **Veredicto: `PHASE_4_NOT_READY`.** Completar S2 no cambia el veredicto global.
 

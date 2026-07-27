@@ -27,7 +27,7 @@ export async function generateSbom(repositoryRoot, outputFile) {
     else if (trimmedEnd.endsWith(": {}")) entry = trimmedEnd.trim().slice(0, -4);
     else continue;
     let key = entry;
-    if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith("\"") && key.endsWith("\""))) {
+    if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith('"') && key.endsWith('"'))) {
       key = key.slice(1, -1);
     }
     // pnpm anexa las dependencias de pares entre paréntesis, por ejemplo
@@ -41,7 +41,8 @@ export async function generateSbom(repositoryRoot, outputFile) {
     if (at <= 0) continue;
     const name = bare.slice(0, at);
     const version = bare.slice(at + 1);
-    if (!name || !version || version.startsWith("link:") || version.startsWith("workspace:")) continue;
+    if (!name || !version || version.startsWith("link:") || version.startsWith("workspace:"))
+      continue;
     components.set(`${name}@${version}`, {
       type: "library",
       name,
@@ -51,8 +52,11 @@ export async function generateSbom(repositoryRoot, outputFile) {
   }
   const digest = createHash("sha256").update(lock).digest("hex");
   const serial = [
-    digest.slice(0, 8), digest.slice(8, 12), `4${digest.slice(13, 16)}`,
-    `8${digest.slice(17, 20)}`, digest.slice(20, 32)
+    digest.slice(0, 8),
+    digest.slice(8, 12),
+    `4${digest.slice(13, 16)}`,
+    `8${digest.slice(17, 20)}`,
+    digest.slice(20, 32)
   ].join("-");
   const bom = {
     bomFormat: "CycloneDX",
@@ -63,7 +67,7 @@ export async function generateSbom(repositoryRoot, outputFile) {
       component: {
         type: "application",
         name: "erp-express-peru-demo",
-        version: "0.3.0"
+        version: "0.4.0"
       },
       properties: [
         { name: "erp.demo.source-lock-sha256", value: digest },

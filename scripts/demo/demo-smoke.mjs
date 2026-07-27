@@ -42,12 +42,20 @@ export async function smokeDemoPackage(packageDirectory, archiveFile) {
   }
   if (archiveFile) await access(resolve(archiveFile));
 
-  const sbom = JSON.parse(await readFile(resolve(packageDirectory, "metadata/sbom.cdx.json"), "utf8"));
-  if (sbom.bomFormat !== "CycloneDX" || !Array.isArray(sbom.components) || sbom.components.length === 0) {
+  const sbom = JSON.parse(
+    await readFile(resolve(packageDirectory, "metadata/sbom.cdx.json"), "utf8")
+  );
+  if (
+    sbom.bomFormat !== "CycloneDX" ||
+    !Array.isArray(sbom.components) ||
+    sbom.components.length === 0
+  ) {
     throw new Error("SBOM CycloneDX vacío o inválido.");
   }
   const checksumLines = (await readFile(resolve(packageDirectory, "checksums.sha256"), "utf8"))
-    .trim().split(/\r?\n/).filter(Boolean);
+    .trim()
+    .split(/\r?\n/)
+    .filter(Boolean);
   for (const line of checksumLines) {
     const match = line.match(/^([0-9a-f]{64})  (.+)$/);
     if (!match) throw new Error(`Línea de checksum inválida: ${line}`);
@@ -57,9 +65,18 @@ export async function smokeDemoPackage(packageDirectory, archiveFile) {
   }
 
   const template = await readFile(resolve(packageDirectory, ".env.demo.example"), "utf8");
-  const generated = ["a".repeat(48), "b".repeat(64), "c".repeat(24), "d".repeat(64), "e".repeat(32)];
+  const generated = [
+    "a".repeat(48),
+    "b".repeat(64),
+    "c".repeat(24),
+    "d".repeat(64),
+    "e".repeat(32)
+  ];
   let index = 0;
-  const smokeEnvironment = template.replaceAll("__GENERATED__", () => generated[index++] ?? "f".repeat(32));
+  const smokeEnvironment = template.replaceAll(
+    "__GENERATED__",
+    () => generated[index++] ?? "f".repeat(32)
+  );
   const smokeEnvPath = resolve(packageDirectory, ".env.demo");
   await writeFile(smokeEnvPath, smokeEnvironment, { encoding: "utf8", mode: 0o600 });
   let dockerCompose = "skipped-docker-not-available";
@@ -68,10 +85,19 @@ export async function smokeDemoPackage(packageDirectory, archiveFile) {
     if (!version.error && version.status === 0) {
       const config = spawnSync(
         "docker",
-        ["compose", "--env-file", smokeEnvPath, "-f", resolve(packageDirectory, "docker-compose.demo.yml"), "config", "--quiet"],
+        [
+          "compose",
+          "--env-file",
+          smokeEnvPath,
+          "-f",
+          resolve(packageDirectory, "docker-compose.demo.yml"),
+          "config",
+          "--quiet"
+        ],
         { cwd: packageDirectory, encoding: "utf8" }
       );
-      if (config.status !== 0) throw new Error(`docker compose config falló: ${config.stderr || config.stdout}`);
+      if (config.status !== 0)
+        throw new Error(`docker compose config falló: ${config.stderr || config.stdout}`);
       dockerCompose = "passed";
     }
   } finally {
@@ -86,7 +112,9 @@ export async function smokeDemoPackage(packageDirectory, archiveFile) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const packageDirectory = resolve(process.argv[2] ?? "dist/demo/erp-express-peru-demo-portable-v0.3.0");
+  const packageDirectory = resolve(
+    process.argv[2] ?? "dist/demo/erp-express-peru-demo-portable-v0.4.0"
+  );
   const archive = process.argv[3] ? resolve(process.argv[3]) : undefined;
   const result = await smokeDemoPackage(packageDirectory, archive);
   console.log(`Smoke demo aprobado: ${JSON.stringify(result)}`);
