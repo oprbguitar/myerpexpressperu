@@ -19,7 +19,7 @@
     "@erp/security": "workspace:*",
     "@fastify/cookie": "11.0.2",
     "@fastify/helmet": "13.1.0",
-    "@fastify/static": "9.1.1",
+    "@fastify/static": "10.1.2",
     "@nestjs/common": "11.1.28",
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-fastify": "11.1.28",

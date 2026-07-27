@@ -36,6 +36,7 @@ const InventoryPage = lazy(() => import("./features/inventory/pages/InventoryPag
 const SunatPage = lazy(() => import("./features/sunat/pages/SunatPage"));
 const DataExchangePage = lazy(() => import("./features/data-exchange/pages/DataExchangePage"));
 const NotificationsPage = lazy(() => import("./features/notifications/pages/NotificationsPage"));
+const WasteWorkspacePage = lazy(() => import("./features/waste/pages/WasteWorkspacePage"));
 const phase3Routes = phase3RouteDefinitions.map((definition) => ({
   ...definition,
   Component: lazy(definition.load)
@@ -83,6 +84,7 @@ export default function App() {
         <Route path="/sunat" element={<Protected><ModuleRoute module="sunat-basic"><SunatPage /></ModuleRoute></Protected>} />
         <Route path="/importaciones" element={<Protected><DataExchangePage /></Protected>} />
         <Route path="/notificaciones" element={<Protected><NotificationsPage /></Protected>} />
+        <Route path="/residuos" element={<Protected><ModuleRoute module="waste-management"><WasteWorkspacePage /></ModuleRoute></Protected>} />
         <Route path="/organizacion" element={<Protected><CompanyPage /></Protected>} />
         <Route path="/sedes" element={<Protected><BranchesPage /></Protected>} />
         <Route path="/usuarios" element={<Protected><UsersPage /></Protected>} />

@@ -35,7 +35,9 @@ const ids = {
   companyA: randomUUID(),
   companyB: randomUUID(),
   partyA: randomUUID(),
-  partyB: randomUUID()
+  partyB: randomUUID(),
+  wasteA: randomUUID(),
+  wasteB: randomUUID()
 };
 
 describe.skipIf(!enabled)("aislamiento RLS de comportamiento (erp_app)", () => {
@@ -57,11 +59,20 @@ describe.skipIf(!enabled)("aislamiento RLS de comportamiento (erp_app)", () => {
           ($4,$5,$6,'LEGAL_ENTITY','RUC','20922222222','Cliente B','cliente b','active')`,
         [ids.partyA, ids.tenantA, ids.companyA, ids.partyB, ids.tenantB, ids.companyB]
       );
+      await client.query(
+        `insert into waste_records(
+          id,tenant_id,company_id,source,description,quantity,unit,hazardous,generated_at
+        ) values
+          ($1,$2,$3,'Área A','Residuo A',1,'KG',false,now()),
+          ($4,$5,$6,'Área B','Residuo B',1,'KG',false,now())`,
+        [ids.wasteA, ids.tenantA, ids.companyA, ids.wasteB, ids.tenantB, ids.companyB]
+      );
     });
   });
 
   afterAll(async () => {
     await owner?.transaction(async (client) => {
+      await client.query("delete from waste_records where id in ($1,$2)", [ids.wasteA, ids.wasteB]);
       await client.query("delete from parties where id in ($1,$2)", [ids.partyA, ids.partyB]);
       await client.query("delete from companies where id in ($1,$2)", [ids.companyA, ids.companyB]);
       await client.query("delete from tenants where id in ($1,$2)", [ids.tenantA, ids.tenantB]);
@@ -103,6 +114,36 @@ describe.skipIf(!enabled)("aislamiento RLS de comportamiento (erp_app)", () => {
       const cross = await client.query("select id from parties where id=$1", [ids.partyB]);
       expect(cross.rows.length).toBe(0);
     });
+  });
+
+  it("la RLS de residuos también aísla tenant y empresa", async () => {
+    await app!.transaction(async (client) => {
+      await client.query("select set_config('app.tenant_id',$1,true),set_config('app.company_id',$2,true)", [
+        ids.tenantA,
+        ids.companyA
+      ]);
+      const own = await client.query("select id from waste_records where id=$1", [ids.wasteA]);
+      const cross = await client.query("select id from waste_records where id=$1", [ids.wasteB]);
+      expect(own.rows).toHaveLength(1);
+      expect(cross.rows).toHaveLength(0);
+    });
+  });
+
+  it("la RLS de residuos rechaza escrituras con ámbito ajeno", async () => {
+    await expect(
+      app!.transaction(async (client) => {
+        await client.query("select set_config('app.tenant_id',$1,true),set_config('app.company_id',$2,true)", [
+          ids.tenantA,
+          ids.companyA
+        ]);
+        await client.query(
+          `insert into waste_records(
+            tenant_id,company_id,source,description,quantity,unit,hazardous,generated_at
+          ) values($1,$2,'Intruso','Fuera de ámbito',1,'KG',false,now())`,
+          [ids.tenantB, ids.companyB]
+        );
+      })
+    ).rejects.toThrow();
   });
 
   it("una escritura con contexto de tenant ajeno es rechazada por la política", async () => {

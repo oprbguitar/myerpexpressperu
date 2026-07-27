@@ -15,3 +15,15 @@ flowchart LR
 ```
 
 Las capas son presentación (`apps`), aplicación/contratos (`packages`), dominio (`packages/domain`) e infraestructura (`packages/database`, adaptadores en API). Las rutas futuras se cargan dinámicamente y sus paquetes no entran al bundle inicial.
+
+## Límite de gestión de residuos
+
+`waste-management` es un módulo aditivo del mismo monolito. Su dominio define
+las fases y transiciones; la API aplica sesión, permiso, idempotencia y
+concurrencia; PostgreSQL conserva registros, eventos append-only y excepciones
+con RLS forzado. La web se carga de forma diferida en `/residuos`.
+
+El cierre interno no forma parte del caso de uso de transición ordinaria. Queda
+bloqueado hasta disponer de un flujo separado de aprobación y evidencia
+documental vinculada. Este límite evita que una capacidad visual se convierta en
+una afirmación regulatoria no implementada.

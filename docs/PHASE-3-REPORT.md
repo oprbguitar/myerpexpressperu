@@ -73,6 +73,42 @@ No se realizó despliegue remoto: el entregable verificable es local y portable.
 La activación productiva requiere infraestructura, secretos server-side, revisión
 legal, pruebas de carga/recuperación y autorización expresa.
 
+## Adenda 2026-07-27 — gestión operativa de residuos
+
+Se añadió un módulo de seguimiento interno con dominio, permisos, migraciones,
+RLS, API, interfaz adaptable, auditoría, outbox, idempotencia y control de
+concurrencia. La revisión de Base de Datos validó aplicación/reversión y ACL; la
+revisión de Seguridad emitió PASS limitado al seguimiento interno; Legal aprobó
+solo demo interna controlada.
+
+El cierre interno permanece bloqueado. La marca de peligrosidad es preliminar.
+No se afirma clasificación legal, cumplimiento ambiental, expediente
+regulatorio, SIGERSOL, destino autorizado ni producción.
+
+Comandos ejecutados durante la implementación:
+
+- `pnpm db:migrate` y `pnpm db:seed`: PASS;
+- `pnpm typecheck`, `pnpm lint` y `pnpm test`: PASS;
+- `pnpm test:integration`: PASS, 27/27 en la última ejecución registrada antes
+  del cierre de esta adenda;
+- E2E específico de residuos: PASS 2/2 en Chromium escritorio, Chromium móvil
+  y WebKit; batería completa PASS, 26 pasadas y 10 omisiones condicionales;
+- `pnpm build`: PASS; el módulo se entrega como chunk lazy separado.
+- `pnpm phase3:verify`: PASS;
+- `pnpm audit --prod`: sin vulnerabilidades conocidas tras actualizar React,
+  React Router, `@fastify/static` y `js-yaml`;
+- `pnpm check:bundle`, `pnpm check:secrets`, `pnpm security:scan`,
+  `pnpm licenses:check`, `pnpm sbom:generate` y `pnpm demo:verify`: PASS.
+
+Riesgos residuales y siguiente fase:
+
+- permiso de transición amplio hasta destino final;
+- backdating sin política específica;
+- sin asignación de responsables, evidencia estructurada o ámbito obligatorio
+  por sede;
+- sin resolución de excepciones ni cierre aprobado;
+- pruebas de carga, WCAG completa y despliegue remoto no ejecutados.
+
 ## Evidencia
 
 Los nueve informes especializados están en `docs/phase3/agent-reports/`. La

@@ -231,6 +231,18 @@ alcance del rol de BD (D-8, ya ejecutado en S1).
 
 **Veredicto: `PHASE_4_NOT_READY`.** Completar S2 no cambia el veredicto global.
 
+### Delta 2026-07-27 — gestión operativa de residuos
+
+Se incorporó un vertical slice aditivo `waste-management` con registro,
+transiciones consecutivas hasta destino final, timeline y excepciones. Las
+migraciones `0014`–`0015` agregan RLS forzado y privilegios mínimos. La ruta
+local es `/residuos`.
+
+Estado: apto para demo interna controlada, no para uso productivo o regulatorio.
+El cierre interno está bloqueado; no existe todavía evidencia documental
+vinculada, segregación de aprobación, catálogo técnico ambiental ni presentación
+ante autoridades. Este delta no cambia `PHASE_4_NOT_READY`.
+
 ## 15. Siguiente acción recomendada
 
 S2 completa. Siguiente: **S4** (normalización de errores de API, cierra VAL-1),

@@ -77,6 +77,7 @@ const permissionCodes = [
   "legal.read", "legal.draft", "legal.approve", "legal.publish", "legal.acceptance.read",
   "privacy.read", "privacy.requests.manage", "privacy.consent.manage",
   "privacy.retention.manage", "privacy.legal-hold.manage", "privacy.export",
+  "waste.read", "waste.create", "waste.transition", "waste.exceptions.manage", "waste.export",
   "demo.read", "demo.manage", "demo.reset", "demo.build", "demo.publish",
   "demo.download-package"
 ];
@@ -105,7 +106,7 @@ const defaultRoles = [
       "parties.create", "products.read", "quotations.read", "quotations.create", "sales-orders.read",
       "sales.read", "sales.create", "purchases.read", "purchases.create", "expenses.read",
       "expenses.create", "receivables.read", "payables.read", "payments.read", "cash.read",
-      "dashboard.read"
+      "dashboard.read", "waste.read", "waste.create", "waste.transition"
     ]
   },
   {
@@ -117,7 +118,7 @@ const defaultRoles = [
     id: "00000000-0000-4000-8000-000000000010", code: "auditor", name: "Auditor",
     companyScoped: true,
     permissions: ["organization.read", "branches.read", "users.read", "roles.read", "permissions.read",
-      "modules.read", "audit.read", "settings.read", "documents.read"]
+      "modules.read", "audit.read", "settings.read", "documents.read", "waste.read"]
   }
 ] as const;
 

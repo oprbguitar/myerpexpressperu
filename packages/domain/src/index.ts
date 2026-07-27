@@ -233,6 +233,7 @@ export const moduleRegistry: readonly ModuleDefinition[] = [
   ["notifications-advanced", "Notificaciones avanzadas", "Preferencias, digest y escalamiento", ["identity"], ["dashboard.read"], true, true],
   ["legal-compliance", "Centro legal", "Documentos legales y evidencia de aceptación", ["documents", "audit", "organization"], ["legal.read"], true, true],
   ["privacy-governance", "Privacidad", "Consentimientos, solicitudes, retención y legal holds", ["identity", "audit", "documents"], ["privacy.read"], true, true],
+  ["waste-management", "Gestión de residuos", "Registro y trazabilidad operativa del ciclo de residuos", ["organization", "documents", "audit"], ["waste.read"], true, true],
   ["provider-management", "Proveedores", "Configuración y salud de proveedores reemplazables", ["admin-control-plane"], ["admin.providers.read"], true, true],
   ["demo-management", "Demostración", "Escenarios, aislamiento y reset seguro", ["module-management", "imports"], ["demo.read"], false, true],
   ["observability", "Observabilidad", "Salud, métricas y eventos operativos", ["audit"], ["admin.settings.read"], true, true],
@@ -290,3 +291,4 @@ export function assertNoCircularArea(areaId: string, parentId: string | null, pa
 
 export * from "./phase2.js";
 export * from "./phase3/index.js";
+export * from "./waste-management.js";

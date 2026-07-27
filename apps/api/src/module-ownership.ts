@@ -78,6 +78,7 @@ export const MODULE_RESOURCE_REGISTRY: ModuleOwnedResource[] = [
   { resourceType: "FRONTEND_ROUTE", resourceId: "/caja", moduleCode: "cash", core: false },
   { resourceType: "FRONTEND_ROUTE", resourceId: "/sunat", moduleCode: "sunat-basic", core: false },
   { resourceType: "FRONTEND_ROUTE", resourceId: "/documentos", moduleCode: "documents", core: false },
+  { resourceType: "FRONTEND_ROUTE", resourceId: "/residuos", moduleCode: "waste-management", core: false },
   { resourceType: "DASHBOARD_WIDGET", resourceId: "cash-balance", moduleCode: "cash", core: false },
   { resourceType: "DASHBOARD_WIDGET", resourceId: "sales-summary", moduleCode: "sales", core: false }
 ];
@@ -102,6 +103,7 @@ export const CONTROLLER_MODULE_MAP: Readonly<Record<string, string>> = {
   FinanceController: "payments",
   ImportsController: "imports",
   InventoryController: "inventory-basic",
+  WasteController: "waste-management",
   SalesController: "sales",
   PurchasesController: "purchases",
   SunatController: "sunat-basic",

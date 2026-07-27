@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="ERP Express Perú: monolito modular portable con trazabilidad, seguridad por diseño y operación verificable."
+    />
+    <meta name="theme-color" content="#082f53" />
+    <meta property="og:title" content="ERP Express Perú" />
+    <meta
+      property="og:description"
+      content="Arquitectura modular, seguridad por diseño y una cadena operativa verificable."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./assets/waste-operations-desktop.png" />
+    <title>ERP Express Perú</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230b7f68' d='M8 12h40l-7 10H22l-8 30H2z'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="ERP Express Perú, inicio">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>ERP Express Perú</span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <a href="#producto">Producto</a>
+        <a href="#arquitectura">Arquitectura</a>
+        <a href="#calidad">Calidad</a>
+        <a href="#documentacion">Documentación</a>
+      </nav>
+      <a
+        class="button button-small"
+        href="https://github.com/oprbguitar/myerpexpressperu"
+        rel="noreferrer"
+      >
+        Ver repositorio
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main id="contenido">
+      <section class="hero" id="inicio">
+        <div class="hero-copy">
+          <h1>ERP Express Perú</h1>
+          <p>
+            Monolito modular portable para gestión empresarial, con trazabilidad, seguridad por
+            diseño y operación verificable.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="#producto"
+              >Explorar el proyecto <span aria-hidden="true">→</span></a
+            >
+            <a
+              class="button button-secondary"
+              href="https://github.com/oprbguitar/myerpexpressperu#readme"
+            >
+              Ver documentación <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+        <div class="technical-grid" aria-hidden="true"></div>
+      </section>
+
+      <section class="product" id="producto" aria-labelledby="producto-titulo">
+        <div class="section-heading">
+          <p>Producto verificable</p>
+          <h2 id="producto-titulo">Cadena de custodia operativa</h2>
+        </div>
+        <figure class="product-frame">
+          <img
+            src="./assets/waste-operations-desktop.png"
+            alt="Vista de escritorio del módulo de gestión de residuos de ERP Express Perú"
+            width="1440"
+            height="900"
+          />
+          <figcaption>
+            Registro, seguimiento por fases, excepciones e inspector contextual en una sola
+            superficie operativa.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="architecture" id="arquitectura" aria-labelledby="arquitectura-titulo">
+        <div class="architecture-intro">
+          <p>Diseño con propósito</p>
+          <h2 id="arquitectura-titulo">
+            Monolito modular.<br />
+            Fronteras claras.<br />
+            Operación verificable.
+          </h2>
+          <p>
+            Los módulos se organizan por dominio. Los puertos y adaptadores desacoplan la lógica de
+            negocio de React, NestJS, PostgreSQL y los proveedores externos.
+          </p>
+          <p>
+            El ámbito de tenant y empresa se deriva de la sesión, con políticas RLS que refuerzan el
+            aislamiento en la persistencia.
+          </p>
+        </div>
+        <div class="principles">
+          <article>
+            <span class="principle-icon" aria-hidden="true">◇</span>
+            <div>
+              <h3>Monolito modular</h3>
+              <p>Módulos cohesionados por dominio, desplegados como una unidad portable.</p>
+            </div>
+          </article>
+          <article>
+            <span class="principle-icon" aria-hidden="true">⌬</span>
+            <div>
+              <h3>Arquitectura hexagonal</h3>
+              <p>Puertos y adaptadores que desacoplan la lógica de negocio.</p>
+            </div>
+          </article>
+          <article>
+            <span class="principle-icon" aria-hidden="true">▣</span>
+            <div>
+              <h3>Seguridad por diseño</h3>
+              <p>Autorización en API, contexto de sesión y PostgreSQL con RLS.</p>
+            </div>
+          </article>
+          <article>
+            <span class="principle-icon" aria-hidden="true">✓</span>
+            <div>
+              <h3>Operación verificable</h3>
+              <p>Auditoría, outbox, idempotencia y pruebas reproducibles.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="quality" id="calidad" aria-label="Evidencia de calidad">
+        <article>
+          <strong>95</strong>
+          <span>pruebas unitarias</span>
+        </article>
+        <article>
+          <strong>27</strong>
+          <span>pruebas de integración</span>
+        </article>
+        <article>
+          <strong>26</strong>
+          <span>pruebas E2E</span>
+        </article>
+        <article>
+          <strong class="quality-statement">Auditoría sin vulnerabilidades conocidas</strong>
+          <span>dependencias de producción</span>
+        </article>
+      </section>
+
+      <section class="lifecycle" aria-labelledby="ciclo-titulo">
+        <div class="section-heading">
+          <p>Gestión de residuos</p>
+          <h2 id="ciclo-titulo">Ciclo de vida operativo</h2>
+        </div>
+        <ol>
+          <li><span>1</span>Generación</li>
+          <li><span>2</span>Clasificación</li>
+          <li><span>3</span>Segregación</li>
+          <li><span>4</span>Almacenamiento inicial</li>
+          <li><span>5</span>Traslado interno</li>
+          <li><span>6</span>Almacén central</li>
+          <li><span>7</span>Despacho</li>
+          <li><span>8</span>Destino final</li>
+          <li><span>9</span>Cierre interno</li>
+        </ol>
+        <p class="boundary-note">
+          El cierre interno está bloqueado hasta contar con aprobación segregada y evidencia
+          documental vinculada. Esta capacidad no acredita cumplimiento ambiental ni cierre
+          regulatorio.
+        </p>
+      </section>
+
+      <section class="docs" id="documentacion" aria-labelledby="documentacion-titulo">
+        <div class="section-heading">
+          <p>Documentación</p>
+          <h2 id="documentacion-titulo">Recursos para explorar y ejecutar el proyecto</h2>
+        </div>
+        <div class="doc-links">
+          <a href="https://github.com/oprbguitar/myerpexpressperu#inicio-rápido">
+            <span>01</span>
+            <strong>Guía de inicio</strong>
+            <small>Requisitos, configuración y servicios locales.</small>
+          </a>
+          <a href="https://github.com/oprbguitar/myerpexpressperu/blob/main/docs/ARCHITECTURE.md">
+            <span>02</span>
+            <strong>Arquitectura</strong>
+            <small>Módulos, límites, flujos y decisiones de diseño.</small>
+          </a>
+          <a href="https://github.com/oprbguitar/myerpexpressperu/blob/main/docs/TESTING.md">
+            <span>03</span>
+            <strong>Calidad</strong>
+            <small>Comandos y estrategia de verificación.</small>
+          </a>
+          <a
+            href="https://github.com/oprbguitar/myerpexpressperu/blob/main/docs/WASTE-MANAGEMENT.md"
+          >
+            <span>04</span>
+            <strong>Gestión de residuos</strong>
+            <small>Alcance, permisos y límites del módulo.</small>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand brand-footer">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>ERP Express Perú</span>
+      </div>
+      <p>Software portable con límites explícitos y evidencia verificable.</p>
+      <p>© 2026 ERP Express Perú · MPL-2.0</p>
+    </footer>
+  </body>
+</html>

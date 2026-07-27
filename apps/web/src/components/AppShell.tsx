@@ -18,7 +18,8 @@ import {
 const navigation = [
   { section: "Operación", items: [
     { to: "/", label: "Resumen", icon: Home, permission: "dashboard.read" },
-    { to: "/notificaciones", label: "Notificaciones", icon: Activity, permission: "dashboard.read" }
+    { to: "/notificaciones", label: "Notificaciones", icon: Activity, permission: "dashboard.read" },
+    { to: "/residuos", label: "Gestión de residuos", icon: PanelsTopLeft, permission: "waste.read", module: "waste-management" }
   ] },
   { section: "Comercial", items: [
     { to: "/clientes", label: "Clientes", icon: UsersRound, permission: "parties.read" },
@@ -71,6 +72,7 @@ export function AppShell({ children }: PropsWithChildren) {
   }, []);
   return (
     <div className="app-layout">
+      <a className="skip-link" href="#main-content">Saltar al contenido</a>
       <aside className={`sidebar ${open ? "is-open" : ""}`} aria-label="Navegación principal">
         <div className="brand"><span className="brand-mark" aria-hidden="true" />ERP Express Perú</div>
         <button className="mobile-close" onClick={() => setOpen(false)} aria-label="Cerrar menú"><X /></button>
@@ -111,18 +113,20 @@ export function AppShell({ children }: PropsWithChildren) {
           <button className="icon-button menu-button" onClick={() => setOpen(true)} aria-label="Abrir menú"><Menu /></button>
           <div className="mobile-brand">ERP Express Perú</div>
           <div className="top-context">
-            <button className="context-selector"><Building2 />Comercial Andina S.A.C.<ChevronDown /></button>
-            <button className="context-selector branch-selector">Sede principal<ChevronDown /></button>
+            <div className="context-selector" aria-label="Contexto de empresa activo"><Building2 />Empresa activa</div>
+            <div className="context-selector branch-selector">
+              {user?.branchIds.length === 1 ? "1 sede autorizada" : `${user?.branchIds.length ?? 0} sedes autorizadas`}
+            </div>
           </div>
-          <div className={`connection ${online ? "online" : "offline"}`}>
+          <div className={`connection ${online ? "online" : "offline"}`} role="status" aria-live="polite">
             {online ? <Wifi /> : <WifiOff />}<span>{online ? "En línea" : "Sin conexión"}</span>
           </div>
           <details className="user-menu">
-            <summary><span className="avatar">AD</span><span>Administrador</span><ChevronDown /></summary>
+            <summary><span className="avatar">US</span><span>Usuario</span><ChevronDown /></summary>
             <button onClick={() => void logout()}>Cerrar sesión</button>
           </details>
         </header>
-        <main>{children}</main>
+        <main id="main-content" tabIndex={-1}>{children}</main>
       </div>
     </div>
   );

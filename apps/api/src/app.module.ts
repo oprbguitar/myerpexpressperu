@@ -51,6 +51,8 @@ import { NotificationsController } from "./notifications.controller.js";
 import { StorageService } from "./storage.service.js";
 import { PdfController } from "./pdf.controller.js";
 import { PdfService } from "./pdf.service.js";
+import { WasteController } from "./waste.controller.js";
+import { WasteService } from "./waste.service.js";
 
 @Module({
   imports: [DatabaseModule, Phase3IntelligenceModule],
@@ -60,13 +62,14 @@ import { PdfService } from "./pdf.service.js";
     PartiesController, CatalogController, SalesController, PurchasesController,
     FinanceController, InventoryController, SunatController, DashboardController, ImportsController,
     NotificationsController, PdfController,
+    WasteController,
     Phase3AdminController, Phase3CrmController, Phase3ProjectsController,
     Phase3PeopleController, Phase3AssetsController, GovernanceController
   ],
   providers: [
     AuthService, OrganizationService, ModulesService, UsersService,
     PartiesService, CatalogService, SalesService, PurchasesService, FinanceService,
-    InventoryService, SunatService, DashboardService, ImportsService, StorageService, PdfService,
+    InventoryService, SunatService, DashboardService, ImportsService, StorageService, PdfService, WasteService,
     Phase3OperationsService, GovernanceService,
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_INTERCEPTOR, useClass: RequestIdInterceptor },

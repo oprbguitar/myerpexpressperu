@@ -38,6 +38,7 @@ import { AiController } from "./phase3/ai/ai.controller.js";
 import { OcrController } from "./phase3/ocr/ocr.controller.js";
 import { MapsController } from "./phase3/maps/maps.controller.js";
 import { ProviderManagementController } from "./phase3/providers/provider-management.controller.js";
+import { WasteController } from "./waste.controller.js";
 
 /** Todos los controladores expuestos por la API (app.module + intelligence). */
 export const ALL_API_CONTROLLERS: Type[] = [
@@ -48,7 +49,7 @@ export const ALL_API_CONTROLLERS: Type[] = [
   PurchasesController, SunatController,
   Phase3AdminController, Phase3CrmController, Phase3ProjectsController,
   Phase3PeopleController, Phase3AssetsController, GovernanceController,
-  AiController, OcrController, MapsController, ProviderManagementController
+  AiController, OcrController, MapsController, ProviderManagementController, WasteController
 ];
 
 export interface OwnershipViolation {
